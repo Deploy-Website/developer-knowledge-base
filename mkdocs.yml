@@ -1,0 +1,99 @@
+site_name: Developer Knowledge Base
+site_description: Personal Technical Knowledge Base for PostgreSQL, Java, Spring Boot, AWS, and System Design.
+site_author: Senior Software Architect & AI Agent Engineer
+site_url: https://github.com/vinh-nt/developer-knowledge-base
+
+repo_name: vinh-nt/developer-knowledge-base
+repo_url: https://github.com/vinh-nt/developer-knowledge-base
+
+theme:
+  name: material
+  language: en
+  palette:
+    # Scheme toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Chuyển sang Dark mode
+
+    # Scheme toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Chuyển sang Light mode
+
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.tracking
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+extra:
+  status:
+    new: Mới cập nhật
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Trang chủ: index.md
+  - PostgreSQL:
+      - Tổng quan & Roadmap: postgresql/index.md
+      - "Deep Dive: EXPLAIN ANALYZE": postgresql/explain-analyze.md
+  - Java:
+      - Tổng quan & Roadmap: java/index.md
+  - Spring Boot:
+      - Tổng quan & Roadmap: spring-boot/index.md
+  - AWS:
+      - Tổng quan & Roadmap: aws/index.md
+  - System Design:
+      - Tổng quan & Roadmap: system-design/index.md
+  - Engineering Standards:
+      - Agent Governance & Rules: standards/agents-governance.md
+      - Kiến trúc & Theme Evaluation: standards/theme-evaluation.md
+      - Templates:
+          - Knowledge Note Template: starter-templates/knowledge-note.md
+          - Book Note Template: starter-templates/book-note.md
+          - Hands-on Lab Template: starter-templates/hands-on-lab.md
