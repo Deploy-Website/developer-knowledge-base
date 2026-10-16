@@ -83,6 +83,7 @@ nav:
       - Tổng quan & Roadmap: postgresql/index.md
       - "Deep Dive: EXPLAIN ANALYZE": postgresql/explain-analyze.md
       - "Troubleshooting: Lock Contention": postgresql/troubleshooting-locks.md
+      - "Investigation: JSONB GIN Tuning": postgresql/investigations/inv-001-jsonb-tuning.md
   - Java:
       - Tổng quan & Roadmap: java/index.md
   - Spring Boot:
@@ -94,6 +95,7 @@ nav:
   - Engineering Standards:
       - Agent Governance & Rules: standards/agents-governance.md
       - Quy Trình Quản Trị Hợp Nhất: standards/unified-workflow.md
+      - Quản Trị Điều Tra (Investigations): standards/investigation-workflow.md
       - Kiến trúc & Theme Evaluation: standards/theme-evaluation.md
       - Templates:
           - Knowledge Note Template: starter-templates/knowledge-note.md
@@ -102,3 +104,5 @@ nav:
           - How-To Template: starter-templates/how-to.md
           - Code Recipe Template: starter-templates/code-recipe.md
           - Hands-on Lab Template: starter-templates/hands-on-lab.md
+          - Raw Investigation Template: starter-templates/investigation-raw.md
+          - Investigation Case Template: starter-templates/investigation-case.md

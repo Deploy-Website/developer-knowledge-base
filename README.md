@@ -51,7 +51,8 @@ Chi tiết đánh giá được công bố tại: [Kiến Trúc & Theme Evaluati
 ```text
 developer-knowledge-base/
 ├── .agents/
-│   └── skills/                         # Bộ 6 Antigravity Agent Skills
+│   └── skills/                         # Bộ 7 Antigravity Agent Skills
+│       ├── document-investigation/     # Kỹ năng xử lý hồ sơ điều tra kỹ thuật nhiều bước
 │       ├── capture-knowledge/SKILL.md  # Kỹ năng thu thập, triage & điều phối tri thức
 │       ├── import-notebooklm/SKILL.md  # Kỹ năng tích hợp ghi chú từ NotebookLM
 │       ├── research-topic/SKILL.md     # Kỹ năng nghiên cứu sâu chủ đề kỹ thuật
@@ -59,16 +60,18 @@ developer-knowledge-base/
 │       ├── create-hands-on-lab/SKILL.md# Kỹ năng thiết kế lab Dockerized độc lập
 │       └── review-knowledge/SKILL.md   # Kỹ năng rà soát, audit & strict build
 ├── inbox/                              # Vùng đệm tiếp nhận ghi chú thô, error logs, drafts
+│   ├── investigations/                 # Staging hồ sơ điều tra thô (<id>/notes.md & attachments)
 │   ├── samples/                        # Mẫu ghi chú thô thực tế (e.g., incident logs)
 │   └── README.md                       # Hướng dẫn quy trình Knowledge Inbox
 ├── docs/                               # Toàn bộ tài liệu hiển thị trên Web (Markdown)
 │   ├── index.md                        # Trang chủ Knowledge Base
-│   ├── postgresql/                     # Trụ cột PostgreSQL, EXPLAIN ANALYZE & Troubleshooting Locks
+│   ├── postgresql/                     # Trụ cột PostgreSQL, EXPLAIN ANALYZE, Locks & Investigations
+│   │   └── investigations/             # Các hồ sơ điều tra thực tế đã xuất bản
 │   ├── java/                           # Trụ cột Modern Java 21+ & JVM Internals
 │   ├── spring-boot/                    # Trụ cột Spring Boot 3.3+ & Hibernate Tuning
 │   ├── aws/                            # Trụ cột AWS Cloud Architecture
 │   ├── system-design/                  # Trụ cột System Design & Distributed Systems
-│   ├── standards/                      # Quy chuẩn kỹ thuật, ADR & Unified Workflow
+│   ├── standards/                      # Quy chuẩn kỹ thuật, ADR & Investigation Workflow
 │   └── starter-templates/              # Biểu mẫu hiển thị tra cứu trên website
 ├── templates/                          # Biểu mẫu gốc dùng cho Agent & Contributor
 │   ├── knowledge-note-template.md      # Biểu mẫu ghi chép kiến thức
@@ -76,7 +79,9 @@ developer-knowledge-base/
 │   ├── troubleshooting-template.md     # Biểu mẫu xử lý sự cố & post-mortem
 │   ├── how-to-template.md              # Biểu mẫu hướng dẫn tác vụ thực tế
 │   ├── code-recipe-template.md         # Biểu mẫu snippet & SQL query recipe
-│   └── hands-on-lab-template.md        # Biểu mẫu hướng dẫn lab
+│   ├── hands-on-lab-template.md        # Biểu mẫu hướng dẫn lab
+│   ├── investigation-raw.md            # Biểu mẫu ghi chép thô cuộc điều tra
+│   └── investigation-case.md           # Biểu mẫu xuất bản hồ sơ điều tra chuẩn
 ├── labs/                               # Mã nguồn thực thi ĐỘC LẬP (Ngoại trừ docs/)
 │   └── postgresql/
 │       └── explain-analyze/            # Lab thực nghiệm PostgreSQL 1.000.000 dòng
@@ -163,10 +168,11 @@ Hệ thống hỗ trợ 2 lộ trình ghi nhận tri thức linh hoạt:
 
 ## 6. Hướng Dẫn Kích Hoạt Antigravity Agent Skills
 
-Dự án tích hợp sẵn **bộ 6 Antigravity Agent Skills** tại `.agents/skills/`. Bạn có thể yêu cầu AI Agent kích hoạt trực tiếp trong chat box:
+Dự án tích hợp sẵn **bộ 7 Antigravity Agent Skills** tại `.agents/skills/`. Bạn có thể yêu cầu AI Agent kích hoạt trực tiếp trong chat box:
 
 | Kỹ năng (Skill) | Mục đích & Ngữ cảnh sử dụng | Lệnh mẫu kích hoạt |
 | :--- | :--- | :--- |
+| **`document-investigation`** | Xử lý hồ sơ điều tra kỹ thuật nhiều bước, bảo tồn tiến trình thời gian và cập nhật lũy tiến. | *"Hãy xử lý hồ sơ điều tra tại inbox/investigations/inv-001/notes.md bằng skill document-investigation."* |
 | **`capture-knowledge`** | Thu thập, phân loại ghi chú thô từ `inbox/`, kiểm tra trùng lặp, cross-linking. | *"Hãy xử lý ghi chú tại inbox/sample-pg-lock-incident.md bằng skill capture-knowledge."* |
 | **`import-notebooklm`** | Tích hợp và kiểm chứng kỹ thuật các ghi chú nghiên cứu xuất từ NotebookLM. | *"Dùng import-notebooklm để đưa ghi chú NotebookLM vào mục PostgreSQL."* |
 | **`research-topic`** | Nghiên cứu sâu chủ đề kỹ thuật đối chiếu official docs, RFCs và JEPs. | *"Nghiên cứu cơ chế Generational ZGC trong Java 21 bằng skill research-topic."* |
@@ -321,3 +327,61 @@ Hãy kích hoạt skill 'review-knowledge' để audit toàn bộ kho lưu trữ
 3. Xác minh tính cô lập của thư mục labs/ (không có binary hay docker-compose trong docs/).
 4. Chạy 'python -m mkdocs build --strict' và báo cáo chi tiết trạng thái.
 ```
+
+---
+
+### 9.7. Use Case: `document-investigation` (Engineering Investigation Management)
+Sử dụng khi xử lý các cuộc điều tra kỹ thuật nhiều bước, các bài toán gỡ lỗi phức tạp kéo dài nhiều ngày, bảo tồn toàn bộ các thử nghiệm thất bại và cập nhật lũy tiến khi có bằng chứng mới.
+
+> [!NOTE]
+> *Lưu ý*: Các ví dụ dưới đây là **mô phỏng minh họa quy trình (Demonstrations)**, không phải số liệu đo đạc thực tế trên hệ thống sản xuất thật của bạn.
+
+#### Ví Dụ 1 — PostgreSQL Query Optimization (Điều Tra Tối Ưu Truy Vấn Đa Kế Hoạch)
+```text
+Input:
+inbox/investigations/inv-202610-pg-jsonb-tuning/notes.md
+
+Hãy dùng skill 'document-investigation' để tổng hợp hồ sơ điều tra này:
+1. Tái lập tiến trình 3 bước: B-Tree expression index (thất bại), GIN jsonb_ops (bloat 1.28GB), và GIN jsonb_path_ops + LZ4 compression (thành công).
+2. Trích xuất bảng so sánh 4 chỉ số: P99 Latency, Dynamic Filtering, Index Size, và Insert Throughput.
+3. Tạo liên kết chéo với docs/postgresql/explain-analyze.md và docs/postgresql/index.md.
+4. Lưu bài viết vào docs/postgresql/investigations/inv-001-jsonb-tuning.md và chạy mkdocs build --strict.
+```
+
+#### Ví Dụ 2 — Spring Boot Troubleshooting (Điều Tra Lỗi Rollback & Connection Timeout)
+```text
+Input:
+inbox/investigations/inv-202610-spring-tx-rollback/notes.md
+Đính kèm: attachments/thread-dump.txt, attachments/application.yml
+
+Hãy dùng skill 'document-investigation' để phân tích:
+1. Bóc tách hiện tượng: Tại sao method có @Transactional gọi nội bộ (self-invocation) lại không được rollback khi gặp exception.
+2. Ghi nhận thử nghiệm 1 thất bại khi cố gắng inject chính service đó (Circular dependency).
+3. Ghi nhận thử nghiệm 2 thành công khi chuyển sang dùng TransactionTemplate.
+4. Xuất bản hồ sơ vào docs/spring-boot/investigations/inv-001-self-invocation-rollback.md.
+```
+
+#### Ví Dụ 3 — AWS Infrastructure Investigation (Thử Nghiệm Chiến Lược Export Dữ Liệu Aurora)
+```text
+Input:
+inbox/investigations/inv-202610-aws-aurora-export/notes.md
+
+Hãy dùng skill 'document-investigation' để xây dựng case study:
+1. Tái lập so sánh giữa: pg_dump thông thường qua EC2 (tốn CPU, network egress cao), AWS DMS task (phức tạp), và aws_s3.query_export_to_s3() tích hợp sẵn của Aurora.
+2. Ghi nhận chi tiết các lệnh SQL, quyền IAM policy và thời gian export đo được trên dataset 100GB.
+3. Rút ra khuyến nghị kiến trúc cho đội ngũ DevOps.
+4. Xuất bản vào docs/aws/investigations/inv-001-aurora-s3-export.md.
+```
+
+#### Ví Dụ 4 — Updating an Existing Investigation (Cập Nhật Lũy Tiến Cho Điều Tra Đang Diễn Ra)
+```text
+Hồ sơ hiện có: docs/postgresql/investigations/inv-001-jsonb-tuning.md
+Dữ liệu mới bổ sung: inbox/investigations/inv-202610-pg-jsonb-tuning/notes.md (Mục "Bước 4: Kiểm tra hành vi Autovacuum trên GIN index")
+
+Hãy dùng skill 'document-investigation' để cập nhật lũy tiến:
+1. Đọc trạng thái hiện tại của hồ sơ đã xuất bản.
+2. Nối tiếp Bước 4 vào Chronological Timeline, ghi nhận các quan sát mới về pg_stat_user_indexes.
+3. Cập nhật bảng chỉ số tổng hợp tại phần Quick Reference.
+4. Giữ nguyên toàn bộ lịch sử Thí nghiệm 1, 2, 3 và kiểm tra strict build.
+```
+

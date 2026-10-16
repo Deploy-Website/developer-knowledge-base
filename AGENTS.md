@@ -71,7 +71,17 @@ developer-knowledge-base/
 
 ### 3.3. Nguyên Tắc Chống Trùng Lặp & Liên Kết Chéo (Deduplication & Cross-Linking)
 - Không tạo bài viết mới nếu chủ đề đó đã có trang chính trong `docs/`; hãy cập nhật và bổ sung trang hiện có.
-- Bắt buộc tạo liên kết chéo hai chiều (bi-directional cross-link) giữa các bài viết lý thuyết nền tảng và bài viết thực chiến (Troubleshooting, Recipe, Lab).
+- Bắt buộc tạo liên kết chéo hai chiều (bi-directional cross-link) giữa các bài viết lý thuyết nền tảng và bài viết thực chiến (Troubleshooting, Recipe, Lab, Investigation).
+
+### 3.4. Quản Trị Hồ Sơ Điều Tra Kỹ Thuật (Investigation Governance)
+- **Bảo tồn tính trung thực lịch sử (Historical Integrity)**:
+  - Bắt buộc ghi nhận đầy đủ tiến trình: Câu hỏi -> Giả thuyết -> Thí nghiệm -> Quan sát -> Phân tích -> Quyết định.
+  - Tuyệt đối KHÔNG xóa bỏ các thử nghiệm thất bại (Failed attempts).
+  - Phân biệt rõ giữa Dữ liệu quan sát thực tế (Facts/Observations) và Nhận định suy diễn (Inferred Hypotheses/Analysis).
+- **Cập nhật lũy tiến (Incremental Updates)**:
+  - Khi có bằng chứng mới, bổ sung các bước tiếp theo vào timeline mà không ghi đè hoặc xóa bỏ các kết luận lịch sử đã được ghi nhận trước đó.
+- **Bảo mật dữ liệu điều tra (Sanitization)**:
+  - Tài liệu đính kèm nhạy cảm (Private logs, heap dumps, pcap) phải được đặt trong `inbox/investigations/<id>/private/` hoặc tuân thủ quy tắc `.gitignore`. Không đưa dữ liệu nhạy cảm vào `docs/`.
 
 ---
 

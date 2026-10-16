@@ -42,3 +42,10 @@ Thumbs.db
 # Docker volumes & local lab temporary data
 labs/**/pgdata/
 labs/**/.env
+
+# Private investigation attachments and raw dumps
+inbox/investigations/**/private/
+inbox/investigations/**/*.secret.*
+inbox/investigations/**/*.dump
+inbox/investigations/**/*.pcap
+inbox/investigations/**/raw-logs/
