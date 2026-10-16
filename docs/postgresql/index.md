@@ -28,9 +28,10 @@ Trọng tâm kiến trúc PostgreSQL gồm 4 tầng cốt lõi:
 
 ---
 
-## 2. Các Bài Phân Tích Chuyên Sâu (Deep-Dive Guides)
+## 2. Các Bài Phân Tích Chuyên Sâu & Xử Lý Sự Cố (Deep Dives & Troubleshooting)
 
 - 🚀 **[PostgreSQL EXPLAIN ANALYZE: Bản chất & Tối ưu Execution Plan](explain-analyze.md)**: Hướng dẫn chuyên sâu từ bản chất thuật toán Cost Model, phân biệt `Seq Scan` vs `Index Scan` vs `Bitmap Scan`, đọc thông số Buffer Hits/Reads, cho đến cạm bẫy JIT Compilation và kịch bản thực nghiệm Dockerized Lab 1.000.000 dòng.
+- 🛠️ **[Troubleshooting: Chẩn đoán & Xử lý Lock Contention / Blocking Queries](troubleshooting-locks.md)**: Phân tích cơ chế Lock Queue FIFO starvation, phát hiện blocking process qua `pg_blocking_pids()`, câu lệnh cứu nguy khẩn cấp và thiết lập `lock_timeout` bảo vệ production.
 
 ---
 

@@ -212,3 +212,11 @@ cd labs/postgresql/explain-analyze
 docker compose up -d
 docker compose exec postgres psql -U postgres -d knowledgedb -f /scripts/queries.sql
 ```
+
+---
+
+## 8. Bài Viết Liên Quan (Related Knowledge)
+
+- 🛠️ **[Troubleshooting: Chẩn đoán & Xử lý Lock Contention / Blocking Queries](troubleshooting-locks.md)**: Xử lý sự cố tranh chấp khóa khi query bị block bởi DDL hoặc long-running transactions.
+- 📚 **[PostgreSQL Knowledge Hub](index.md)**: Tổng quan kiến trúc PostgreSQL, B-Tree indexing, MVCC, và tối ưu hóa bộ nhớ.
+

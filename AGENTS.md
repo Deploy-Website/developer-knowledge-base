@@ -43,14 +43,15 @@ Mọi kiến thức được đưa vào kho lưu trữ phải đối chiếu t�
 developer-knowledge-base/
 ├── .agents/skills/      # Antigravity Agent Skills (cheatsheets & workflows)
 ├── AGENTS.md            # Governing rules (this file)
+├── inbox/               # Staging area for raw notes, logs, and drafts
 ├── docs/                # MkDocs Markdown documentation ONLY
-│   ├── postgresql/      # Deep dives & notes for PostgreSQL
+│   ├── postgresql/      # Deep dives, how-tos, recipes & troubleshooting
 │   ├── java/            # Deep dives & notes for Java
 │   ├── spring-boot/     # Deep dives & notes for Spring Boot
 │   ├── aws/             # Deep dives & notes for AWS
 │   ├── system-design/   # Deep dives & notes for System Design
-│   ├── standards/       # Architectural standards & evaluations
-│   └── templates/       # Published markdown templates
+│   ├── standards/       # Architectural standards, workflows & evaluations
+│   └── starter-templates/# Published markdown templates
 ├── templates/           # Raw templates for direct agent usage
 ├── labs/                # Executable hands-on code (SEPARATED FROM docs/)
 │   └── <topic>/<lab>/   # Docker Compose, scripts, SQL, Java source code
@@ -63,6 +64,14 @@ developer-knowledge-base/
 - **Thư mục `docs/`**: CHỈ chứa các tệp Markdown (`.md`), hình ảnh sơ đồ (`.png`, `.svg`), hoặc diagrams (`mermaid`).
 - **Thư mục `labs/`**: Chứa toàn bộ source code thực thi (Docker Compose, `init.sql`, bash scripts, Java test cases, JMeter/k6 scripts).
 - **Tuyệt đối KHÔNG** để source code dự án lớn hoặc binary files bên trong `docs/`. Trong `docs/`, chỉ trích dẫn các code snippet quan trọng và dẫn link tương đối sang `labs/`.
+
+### 3.2. Vùng Đệm Tiếp Nhận (Knowledge Inbox Rule)
+- **Thư mục `inbox/`**: Là staging area tạm thời chứa ghi chú thô, error logs, draft post-mortems hoặc trích xuất từ NotebookLM.
+- Khi tiếp nhận tài liệu từ `inbox/`, Agent phải kiểm tra trùng lặp (Deduplication), chọn template chuẩn hóa (`templates/`), chuyển đổi vào `docs/` hoặc `labs/`, và di chuyển hoặc dọn dẹp file thô.
+
+### 3.3. Nguyên Tắc Chống Trùng Lặp & Liên Kết Chéo (Deduplication & Cross-Linking)
+- Không tạo bài viết mới nếu chủ đề đó đã có trang chính trong `docs/`; hãy cập nhật và bổ sung trang hiện có.
+- Bắt buộc tạo liên kết chéo hai chiều (bi-directional cross-link) giữa các bài viết lý thuyết nền tảng và bài viết thực chiến (Troubleshooting, Recipe, Lab).
 
 ---
 
