@@ -44,12 +44,18 @@ developer-knowledge-base/
 ├── .agents/skills/      # Antigravity Agent Skills (cheatsheets & workflows)
 ├── AGENTS.md            # Governing rules (this file)
 ├── inbox/               # Staging area for raw notes, logs, and drafts
+├── nodes/               # Staging area for structured TXT notes (Item, Type, Domain, Content)
 ├── docs/                # MkDocs Markdown documentation ONLY
-│   ├── postgresql/      # Deep dives, how-tos, recipes & troubleshooting
-│   ├── java/            # Deep dives & notes for Java
-│   ├── spring-boot/     # Deep dives & notes for Spring Boot
-│   ├── aws/             # Deep dives & notes for AWS
-│   ├── system-design/   # Deep dives & notes for System Design
+│   ├── postgresql/      # Deep dives, how-tos, recipes, investigations & best-practices
+│   │   └── best-practices/ # Domain-specific Best Practices (grouped by topic)
+│   ├── java/            # Deep dives, notes & best-practices
+│   │   └── best-practices/
+│   ├── spring-boot/     # Deep dives, notes & best-practices
+│   │   └── best-practices/
+│   ├── aws/             # Deep dives, notes & best-practices
+│   │   └── best-practices/
+│   ├── system-design/   # Deep dives, notes & best-practices
+│   │   └── best-practices/
 │   ├── standards/       # Architectural standards, workflows & evaluations
 │   └── starter-templates/# Published markdown templates
 ├── templates/           # Raw templates for direct agent usage
@@ -82,6 +88,17 @@ developer-knowledge-base/
   - Khi có bằng chứng mới, bổ sung các bước tiếp theo vào timeline mà không ghi đè hoặc xóa bỏ các kết luận lịch sử đã được ghi nhận trước đó.
 - **Bảo mật dữ liệu điều tra (Sanitization)**:
   - Tài liệu đính kèm nhạy cảm (Private logs, heap dumps, pcap) phải được đặt trong `inbox/investigations/<id>/private/` hoặc tuân thủ quy tắc `.gitignore`. Không đưa dữ liệu nhạy cảm vào `docs/`.
+
+### 3.5. Quản Trị Quy Chuẩn Thực Hành Tốt Nhất (Best Practices Governance)
+- **Cấu trúc theo Lĩnh vực (Domain-based Hub)**: Mỗi trụ cột công nghệ (`postgresql`, `java`, `spring-boot`, `aws`, `system-design`) sở hữu một phân mục `best-practices/` với `index.md` đóng vai trò là Hub dẫn nhập.
+- **Tập hợp theo Chủ đề (Topic Grouping)**: Gom nhóm các khuyến nghị liên quan vào các trang chủ đề có ý nghĩa (e.g. `query-optimization.md`, `exception-handling.md`); không tạo tệp manh mún cho từng phát hiện nhỏ lẻ.
+- **Minh bạch Cấp độ Bằng chứng (Evidence Levels)**: Bắt buộc khai báo 1 trong 4 cấp độ: `Official Guidance`, `Verified Experiment`, `Context-specific Finding`, hoặc `Candidate`. Tuyệt đối không nâng một thử nghiệm cá biệt thành chuẩn mực phổ quát.
+- **Kế thừa Hồ sơ Điều tra (Investigation Integration)**: Khi trích xuất bài học từ hồ sơ điều tra (`document-investigation`), bảo tồn nguyên vẹn hồ sơ điều tra gốc; chỉ đúc kết giải pháp chốt hạ vào Best Practice và tạo liên kết hai chiều.
+
+### 3.6. Quản Trị Nhập Ghi Chú TXT (TXT Notes Management)
+- **Thư mục `nodes/`**: Chứa các file ghi chú kỹ thuật dạng `.txt` với header chuẩn hóa (`Item`, `Type`, `Domain`, `Content`).
+- **Bảo tồn file gốc**: Không bao giờ xóa hoặc sửa đổi file `.txt` gốc trong quá trình import.
+- **Tính lũy thừa & Chống trùng lặp**: Theo dõi trạng thái import qua `nodes/.import-manifest.json` dựa trên SHA-256 hash. Không tạo bản ghi trùng lặp và phát hiện xung đột nếu file đích đã tồn tại độc lập.
 
 ---
 

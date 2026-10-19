@@ -28,13 +28,18 @@ graph TD
         In2 --> Sk_NLM["import-notebooklm"]
         In3 --> Sk_Research["research-topic"]
         Inbox --> Sk_Capture["capture-knowledge<br/>(Deduplication & Triage)"]
+        Inbox --> Sk_Inv["document-investigation<br/>(Preserve Timeline & Experiments)"]
         
+        Sk_Inv -.->|Trích xuất giải pháp chốt hạ| Sk_BP["manage-best-practices<br/>(Evidence Levels & Standards)"]
+        Sk_Capture -.->|Khuyến nghị chuẩn mực| Sk_BP
+        Sk_Book -.->|Ứng viên Best Practice| Sk_BP
+        Sk_Research -.->|Chuẩn hóa khuyến nghị| Sk_BP
         Sk_Capture -.->|Nếu cần benchmark| Sk_Lab["create-hands-on-lab"]
         Sk_Capture -.->|Nếu là concept sâu| Sk_Research
     end
 
     subgraph Storage_Layer["Cấu Trúc Lưu Trữ (Separation of Concerns)"]
-        Sk_Book & Sk_NLM & Sk_Research & Sk_Capture --> Docs["docs/<br/>(Markdown, Diagrams, Cross-links)"]
+        Sk_Book & Sk_NLM & Sk_Research & Sk_Capture & Sk_Inv & Sk_BP --> Docs["docs/<br/>(Markdown, Diagrams, Cross-links)"]
         Sk_Lab --> Labs["labs/<br/>(Docker Compose, SQL, Code)"]
     end
 
@@ -49,6 +54,8 @@ graph TD
 
 | Dạng tri thức | Mục đích & Ngữ cảnh sử dụng | Biểu mẫu áp dụng (Template) | Thư mục đích |
 | :--- | :--- | :--- | :--- |
+| **Best Practice** | Quy chuẩn sản xuất, giải pháp tái sử dụng được gắn nhãn Cấp độ Bằng chứng (Official/Verified/Context/Candidate), phân tích Why It Works và Chống chỉ định. | [`best-practice.md`](../starter-templates/best-practice.md) | `docs/<pillar>/best-practices/<topic>.md` |
+| **Investigation Case** | Hồ sơ điều tra thực tế nhiều bước, bảo tồn tiến trình thời gian, các giả thuyết, thử nghiệm thất bại và số liệu đo lường. | [`investigation-case.md`](../starter-templates/investigation-case.md) | `docs/<pillar>/investigations/<id>.md` |
 | **Knowledge Note** | Phân tích sâu kiến trúc, cơ chế hoạt động bên dưới (Under the hood) và trade-offs. | [`knowledge-note-template.md`](../starter-templates/knowledge-note.md) | `docs/<pillar>/<topic>.md` |
 | **Book Note** | Đúc kết mô hình tư duy, nguyên lý thiết kế và bài học từ sách kinh điển. | [`book-note-template.md`](../starter-templates/book-note.md) | `docs/<pillar>/<book>.md` |
 | **Troubleshooting Case** | Ghi lại sự cố thực tế, các câu query chẩn đoán, nguyên nhân gốc rễ và bài học phòng ngừa. | [`troubleshooting-template.md`](../starter-templates/troubleshooting.md) | `docs/<pillar>/troubleshooting-<topic>.md` |

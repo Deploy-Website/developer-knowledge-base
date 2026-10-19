@@ -41,7 +41,8 @@ For each concept, decide whether to:
 Create or update:
 
 - Book Note: key lessons from the source material.
-- Knowledge Note: reusable explanations and best practices.
+- Knowledge Note: reusable explanations and concepts.
+- Best Practice: delegate reusable, validated recommendations to **`manage-best-practices`** (tag unverified claims as `[Candidate]`).
 - Hands-on Lab: only when practical testing adds value.
 - Review Questions: 3–5 questions for active recall.
 

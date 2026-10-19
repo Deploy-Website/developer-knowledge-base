@@ -33,7 +33,14 @@ Trọng tâm kiến trúc Spring Boot gồm 4 khối nền tảng:
 
 ---
 
-## 2. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
+## 2. Quy Chuẩn Thực Hành Tốt Nhất (Production Best Practices)
+
+- 🏆 **[Spring Boot Best Practices Hub](best-practices/index.md)**: Hệ thống hóa các quy chuẩn bảo vệ tài nguyên, tối ưu kết nối và vận hành microservices.
+  - 🌐 **[Best Practice: Cấu Hình WebClient Kháng Lỗi (Resilient WebClient)](best-practices/resilient-webclient.md)**: Cấu hình 4 tầng timeout, connection pool Netty, và retry có exponential backoff kèm jitter.
+
+---
+
+## 3. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
 
 ### A. Spring AOP & Cạm bẫy `@Transactional`
 - **Self-Invocation Pitfall**: Khi một method trong cùng class gọi method khác có `@Transactional`, proxy bị bỏ qua dẫn tới giao dịch không được quản lý. Giải pháp: tách service hoặc dùng `TransactionTemplate`.

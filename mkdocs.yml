@@ -81,21 +81,40 @@ nav:
   - Trang chủ: index.md
   - PostgreSQL:
       - Tổng quan & Roadmap: postgresql/index.md
+      - Best Practices:
+          - Tổng quan: postgresql/best-practices/index.md
+          - "Tối ưu hóa Truy vấn & Chỉ mục JSONB": postgresql/best-practices/jsonb-query-optimization.md
+          - "PostgreSQL B-Tree Index Deduplication": postgresql/best-practices/postgresql-b-tree-index-deduplication.md
       - "Deep Dive: EXPLAIN ANALYZE": postgresql/explain-analyze.md
       - "Troubleshooting: Lock Contention": postgresql/troubleshooting-locks.md
       - "Investigation: JSONB GIN Tuning": postgresql/investigations/inv-001-jsonb-tuning.md
   - Java:
       - Tổng quan & Roadmap: java/index.md
+      - Best Practices:
+          - Tổng quan: java/best-practices/index.md
+          - "Xử lý Ngoại lệ Chuẩn mực": java/best-practices/exception-handling.md
   - Spring Boot:
       - Tổng quan & Roadmap: spring-boot/index.md
+      - Best Practices:
+          - Tổng quan: spring-boot/best-practices/index.md
+          - "Cấu hình WebClient Kháng lỗi": spring-boot/best-practices/resilient-webclient.md
+      - How-to:
+          - "Cấu Hình Virtual Threads Cho Spring Boot 3.3": spring-boot/how-to/cau-hinh-virtual-threads-cho-spring-boot-33.md
   - AWS:
       - Tổng quan & Roadmap: aws/index.md
+      - Best Practices:
+          - Tổng quan: aws/best-practices/index.md
+          - "Export Aurora PostgreSQL sang S3": aws/best-practices/aurora-s3-export.md
   - System Design:
       - Tổng quan & Roadmap: system-design/index.md
+      - Best Practices:
+          - Tổng quan: system-design/best-practices/index.md
+          - "Thiết kế Idempotency & Phòng vệ Sự cố": system-design/best-practices/idempotency-and-resilience.md
   - Engineering Standards:
       - Agent Governance & Rules: standards/agents-governance.md
       - Quy Trình Quản Trị Hợp Nhất: standards/unified-workflow.md
       - Quản Trị Điều Tra (Investigations): standards/investigation-workflow.md
+      - Hướng Dẫn Nhập Ghi Chú TXT: standards/txt-import-guide.md
       - Kiến trúc & Theme Evaluation: standards/theme-evaluation.md
       - Templates:
           - Knowledge Note Template: starter-templates/knowledge-note.md
@@ -106,3 +125,4 @@ nav:
           - Hands-on Lab Template: starter-templates/hands-on-lab.md
           - Raw Investigation Template: starter-templates/investigation-raw.md
           - Investigation Case Template: starter-templates/investigation-case.md
+          - Best Practice Template: starter-templates/best-practice.md

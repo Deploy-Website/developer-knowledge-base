@@ -46,8 +46,10 @@ Trước khi tạo bất kỳ tệp mới nào, **bắt buộc phải tìm kiế
 | **Troubleshooting Case** | Sự cố production, lỗi timeout, lock contention, memory leak, exception crash. | Dùng `templates/troubleshooting-template.md` -> Lưu vào `docs/<pillar>/troubleshooting-<topic>.md`. |
 | **How-To Guide** | Hướng dẫn cấu hình từng bước, quy trình migration, setup service. | Dùng `templates/how-to-template.md` -> Lưu vào `docs/<pillar>/how-to-<topic>.md`. |
 | **SQL / Code Recipe** | Tập hợp các câu query giám sát, script tự động, utility pattern. | Dùng `templates/code-recipe-template.md` -> Lưu vào `docs/<pillar>/recipe-<topic>.md`. |
+| **Best Practice** | Khuyến nghị chuẩn mực sản xuất, mẫu thiết kế tái sử dụng, tối ưu hóa đã kiểm chứng. | Kích hoạt **`manage-best-practices`** (Dùng `templates/best-practice.md` -> Lưu vào `docs/<pillar>/best-practices/<topic>.md`). |
+| **Investigation Notes** | Nhật ký điều tra nhiều bước, chuỗi thử nghiệm có thất bại và số liệu đo đạc. | Kích hoạt **`document-investigation`** (Lưu vào `docs/<pillar>/investigations/`). |
 | **Deep Concept** | Cơ chế hoạt động phức tạp cần đối chiếu sâu tài liệu chuẩn. | Kích hoạt hoặc kế thừa quy trình từ **`research-topic`**. |
-| **Sách / Nghiên cứu** | Tóm tắt từ sách kỹ thuật hoặc bài báo nghiên cứu. | Kích hoạt **`summarize-book`**. |
+| **Sách / Nghiên cứu** | Tóm tắt từ sách kỹ thuật hoặc bài báo nghiên cứu. | Kích hoạt **`summarize-book`** (Trích xuất ứng viên Best Practice sang `manage-best-practices`). |
 | **NotebookLM Export** | Ghi chú xuất từ NotebookLM. | Kích hoạt **`import-notebooklm`**. |
 | **Lab Thực Nghiệm** | Cần môi trường Docker để benchmark hoặc tái lập. | Kích hoạt **`create-hands-on-lab`** (Lưu code vào `labs/`). |
 

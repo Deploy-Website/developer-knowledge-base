@@ -30,9 +30,10 @@ Use this skill when distilling knowledge from engineering books (such as *Design
   - Concurrency models -> Virtual Threads và ReentrantLock trong Java.
   - Event-driven patterns -> AWS SNS, SQS, Kinesis và Spring Cloud Stream.
 
-### 4. Drafting the Document
+### 4. Drafting the Document & Best Practice Candidates
 - Sử dụng template tại `templates/book-note-template.md`.
 - Trình bày dạng bảng so sánh (Comparison tables), sơ đồ Mermaid biểu diễn dòng thông tin, và ghi chú cảnh báo (Admonitions).
+- **Trích xuất ứng viên Best Practice (`Candidate`)**: Nhận diện các nguyên lý hoặc mẫu kiến trúc kinh điển có tiềm năng tái sử dụng. Không tự động phong mọi lời khuyên trong sách thành chuẩn mực sản xuất phổ quát nếu chưa đối chiếu phiên bản công nghệ hiện tại; chuyển các đề xuất sang **`manage-best-practices`** với Evidence Level `[Candidate]`.
 - Giữ nguyên thuật ngữ tiếng Anh gốc của tác giả để tiện tra cứu tài liệu chuyên sâu.
 
 ### 5. Verification & Strict Build

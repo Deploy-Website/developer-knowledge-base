@@ -15,6 +15,10 @@ Use this skill when auditing existing documentation, reviewing newly proposed kn
 - **Đối chiếu Official Documentation**: Kiểm tra từng API signature, command flag, và kiến trúc đối với phiên bản tương ứng.
 - **Phát hiện Deprecated Patterns**: Cảnh báo nếu bài viết sử dụng tính năng đã lỗi thời (ví dụ: SecurityConfigurerAdapter trong Spring Security 6, các tham số postgresql.conf cũ).
 - **Phát hiện Hallucination**: Đảm bảo không có thông số benchmark tự vẽ, giả định phi thực tế, hoặc trích dẫn thiếu căn cứ.
+- **Rà soát Best Practices & Cấp độ Bằng chứng**:
+  - Xác nhận mọi bài viết Best Practice đều khai báo `Evidence Level` hợp lệ (`Official Guidance`, `Verified Experiment`, `Context-specific Finding`, `Candidate`).
+  - Phát hiện các mâu thuẫn kỹ thuật (Contradictions) hoặc hướng dẫn chồng chéo giữa các bài Best Practice.
+  - Cảnh báo nếu các thử nghiệm chưa được xác minh bị dán nhãn sai thành chuẩn mực phổ quát.
 
 ### 2. Language & Terminology Audit
 - Kiểm tra tính nhất quán: Sử dụng tiếng Việt chuẩn xác kết hợp thuật ngữ tiếng Anh tự nhiên.

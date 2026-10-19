@@ -16,7 +16,7 @@ Kho tri thức này được xây dựng dựa trên sự kết hợp giữa **T
 
     Cơ chế tối ưu hóa câu truy vấn, Storage Engine, MVCC, Heap & Index B-Tree/GIN/BRIN, WAL, Locking, Partitioning và phân tích sâu Execution Plans với `EXPLAIN ANALYZE`.
 
-    [:octicons-arrow-right-24: Khám phá PostgreSQL](postgresql/index.md)
+    [:octicons-arrow-right-24: Khám phá PostgreSQL](postgresql/index.md) · [:octicons-bookmark-24: Best Practices](postgresql/best-practices/index.md)
 
 -   :material-language-java:{ .lg .middle } __Modern Java (21 LTS+)__
 
@@ -24,7 +24,7 @@ Kho tri thức này được xây dựng dựa trên sự kết hợp giữa **T
 
     JVM Memory Model (JMM), ZGC & Generational ZGC, Concurrency & Virtual Threads (Project Loom), Class Loading, Bytecode, và các mẫu hình tối ưu hóa high-throughput.
 
-    [:octicons-arrow-right-24: Khám phá Java](java/index.md)
+    [:octicons-arrow-right-24: Khám phá Java](java/index.md) · [:octicons-bookmark-24: Best Practices](java/best-practices/index.md)
 
 -   :material-leaf:{ .lg .middle } __Spring Boot Ecosystem__
 
@@ -32,7 +32,7 @@ Kho tri thức này được xây dựng dựa trên sự kết hợp giữa **T
 
     Nội tại Spring Core (IoC/DI, Bean Lifecycle, Proxy/AOP), Spring Data JPA / Hibernate N+1 resolution, Connection Pool Tuning (HikariCP), và Distributed Tracing.
 
-    [:octicons-arrow-right-24: Khám phá Spring Boot](spring-boot/index.md)
+    [:octicons-arrow-right-24: Khám phá Spring Boot](spring-boot/index.md) · [:octicons-bookmark-24: Best Practices](spring-boot/best-practices/index.md)
 
 -   :material-aws:{ .lg .middle } __AWS Cloud Architecture__
 
@@ -40,7 +40,7 @@ Kho tri thức này được xây dựng dựa trên sự kết hợp giữa **T
 
     Thiết kế hạ tầng Cloud-native tuân thủ Well-Architected Framework: VPC Networking, IAM Least Privilege, DynamoDB Single-Table Design, SQS/SNS Event-driven, ECS/EKS.
 
-    [:octicons-arrow-right-24: Khám phá AWS](aws/index.md)
+    [:octicons-arrow-right-24: Khám phá AWS](aws/index.md) · [:octicons-bookmark-24: Best Practices](aws/best-practices/index.md)
 
 -   :material-server-network:{ .lg .middle } __System Design & Distributed Systems__
 
@@ -48,13 +48,13 @@ Kho tri thức này được xây dựng dựa trên sự kết hợp giữa **T
 
     Thiết kế hệ thống chịu tải cao (High-load & High-availability), CAP & PACELC, Consensus (Raft/Paxos), Distributed Transactions (2PC, Saga), Rate Limiting, Caching Strategies.
 
-    [:octicons-arrow-right-24: Khám phá System Design](system-design/index.md)
+    [:octicons-arrow-right-24: Khám phá System Design](system-design/index.md) · [:octicons-bookmark-24: Best Practices](system-design/best-practices/index.md)
 
 -   :material-robot:{ .lg .middle } __Agent Skills & Engineering Rules__
 
     ---
 
-    Quy chuẩn vận hành nghiêm ngặt (`AGENTS.md`), bộ kỹ năng Antigravity Agent Skills tự động hóa nghiên cứu và kiểm thử tài liệu, cùng kho Templates chuẩn hóa.
+    Quy chuẩn vận hành nghiêm ngặt (`AGENTS.md`), bộ 8 kỹ năng Antigravity Agent Skills tự động hóa nghiên cứu và kiểm thử tài liệu, cùng kho Templates chuẩn hóa.
 
     [:octicons-arrow-right-24: Xem Quy chuẩn Kỹ thuật](standards/agents-governance.md)
 

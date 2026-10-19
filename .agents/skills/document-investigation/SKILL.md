@@ -64,12 +64,13 @@ graph TD
 
 ### Step 4 — Reusable Knowledge Extraction
 - Determine which insights represent generalizable engineering knowledge:
+  - **Best Practice** (reusable production-grade solution, delegated to **`manage-best-practices`**)
   - Concept (relational storage internals, memory barriers)
   - How-To (step-by-step setup or migration procedure)
   - Troubleshooting (quick symptom -> fix runbook)
   - Hands-on Lab (reproducible test environment in `labs/`)
   - Recipe (reusable query or utility snippet)
-- **Rule**: Do not automatically create separate pages for every concept. Keep specific findings in the investigation case, and only extract standalone pages when they offer independent long-term value.
+- **Rule**: Do not erase or simplify the investigation case. The investigation preserves the full chronological timeline, hypotheses, and failed attempts. Extract only the validated reusable solution into `manage-best-practices` and establish bidirectional links.
 
 ### Step 5 — Existing Knowledge Analysis & Deduplication
 - Search `docs/` and `mkdocs.yml` using `grep_search` to find related topics.
@@ -117,6 +118,7 @@ Investigations often evolve over days or weeks as new logs, vendor responses, or
 
 | Skill | Interaction with `document-investigation` |
 | :--- | :--- |
+| **`manage-best-practices`** | Promotes validated final resolutions from investigations into domain-based Best Practice guides with Evidence Level 'Verified Experiment', maintaining bidirectional links. |
 | **`capture-knowledge`** | Delegates to `document-investigation` when an inbox item contains multi-step experiments or investigations. |
 | **`research-topic`** | Invoked when an investigation uncovers a deep engine mechanism requiring comprehensive official documentation research. |
 | **`create-hands-on-lab`** | Invoked when the investigation requires an isolated Dockerized reproduction environment in `labs/`. |

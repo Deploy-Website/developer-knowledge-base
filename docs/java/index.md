@@ -33,7 +33,14 @@ Kiến trúc Java hiện đại tập trung vào 4 khía cạnh cốt lõi:
 
 ---
 
-## 2. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
+## 2. Quy Chuẩn Thực Hành Tốt Nhất (Production Best Practices)
+
+- 🏆 **[Modern Java Best Practices Hub](best-practices/index.md)**: Hệ thống hóa các quy chuẩn lập trình, xử lý đồng thời và tối ưu tài nguyên JVM.
+  - 🛡️ **[Best Practice: Xử Lý Ngoại Lệ Chuẩn Mực (Exception Handling)](best-practices/exception-handling.md)**: Bảo toàn root cause, domain modeling với Sealed Exceptions, và quản lý ngoại lệ trong Virtual Threads.
+
+---
+
+## 3. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
 
 ### A. Project Loom: Virtual Threads & High-Throughput I/O
 - **Platform Threads vs. Virtual Threads**: Phân biệt kích thước bộ nhớ call stack (1MB cố định vs vài KB tự co giãn trong Heap).

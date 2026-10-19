@@ -39,8 +39,9 @@ Chỉ sử dụng các nguồn chính thống có thẩm quyền cao:
 - Code blocks phải có cú pháp chỉ định ngôn ngữ rõ ràng (`sql`, `java`, `bash`, `yaml`) và chú thích dòng.
 - Bổ sung sơ đồ Mermaid để trực quan hóa luồng dữ liệu hoặc kiến trúc.
 
-### 5. Verification & Navigation Update
-- Kiểm tra toàn bộ đường dẫn relative link.
+### 5. Best Practice Promotion & Navigation Update
+- **Liên kết Best Practice**: Xác định xem nghiên cứu này có cung cấp khuyến nghị sản xuất hay không. Nếu có, kích hoạt hoặc cập nhật trang liên quan trong `docs/<pillar>/best-practices/` thông qua **`manage-best-practices`** với Evidence Level tương ứng.
+- **Liên kết chéo**: Đảm bảo trang Knowledge Note liên kết tới trang Best Practice và ngược lại.
 - Cập nhật mục lục trong `mkdocs.yml` tương ứng với vị trí trang mới tạo.
 - Chạy kiểm tra nghiêm ngặt:
   ```powershell

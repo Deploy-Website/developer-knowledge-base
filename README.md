@@ -51,7 +51,9 @@ Chi tiết đánh giá được công bố tại: [Kiến Trúc & Theme Evaluati
 ```text
 developer-knowledge-base/
 ├── .agents/
-│   └── skills/                         # Bộ 7 Antigravity Agent Skills
+│   └── skills/                         # Bộ 9 Antigravity Agent Skills
+│       ├── import-txt-notes/           # Kỹ năng nhập ghi chú TXT và tự động phân loại menu MkDocs
+│       ├── manage-best-practices/      # Kỹ năng trích xuất, tổ chức & duy trì Best Practices theo domain
 │       ├── document-investigation/     # Kỹ năng xử lý hồ sơ điều tra kỹ thuật nhiều bước
 │       ├── capture-knowledge/SKILL.md  # Kỹ năng thu thập, triage & điều phối tri thức
 │       ├── import-notebooklm/SKILL.md  # Kỹ năng tích hợp ghi chú từ NotebookLM
@@ -63,17 +65,26 @@ developer-knowledge-base/
 │   ├── investigations/                 # Staging hồ sơ điều tra thô (<id>/notes.md & attachments)
 │   ├── samples/                        # Mẫu ghi chú thô thực tế (e.g., incident logs)
 │   └── README.md                       # Hướng dẫn quy trình Knowledge Inbox
+├── nodes/                              # Staging area chứa ghi chú TXT có cấu trúc (Item, Type, Domain)
+│   ├── .import-manifest.json           # File manifest theo dõi trạng thái và hash chống trùng lặp
+│   └── README.md                       # Hướng dẫn định dạng ghi chú TXT
 ├── docs/                               # Toàn bộ tài liệu hiển thị trên Web (Markdown)
 │   ├── index.md                        # Trang chủ Knowledge Base
-│   ├── postgresql/                     # Trụ cột PostgreSQL, EXPLAIN ANALYZE, Locks & Investigations
+│   ├── postgresql/                     # Trụ cột PostgreSQL, EXPLAIN ANALYZE, Locks & Best Practices
+│   │   ├── best-practices/             # Quy chuẩn sản xuất cho PostgreSQL (Query, Indexing, ...)
 │   │   └── investigations/             # Các hồ sơ điều tra thực tế đã xuất bản
 │   ├── java/                           # Trụ cột Modern Java 21+ & JVM Internals
+│   │   └── best-practices/             # Quy chuẩn sản xuất cho Java (Exceptions, Concurrency, ...)
 │   ├── spring-boot/                    # Trụ cột Spring Boot 3.3+ & Hibernate Tuning
+│   │   └── best-practices/             # Quy chuẩn sản xuất cho Spring Boot (WebClient, HikariCP, ...)
 │   ├── aws/                            # Trụ cột AWS Cloud Architecture
+│   │   └── best-practices/             # Quy chuẩn sản xuất cho AWS (VPC, Aurora Export, ...)
 │   ├── system-design/                  # Trụ cột System Design & Distributed Systems
+│   │   └── best-practices/             # Quy chuẩn sản xuất cho System Design (Idempotency, Outbox, ...)
 │   ├── standards/                      # Quy chuẩn kỹ thuật, ADR & Investigation Workflow
 │   └── starter-templates/              # Biểu mẫu hiển thị tra cứu trên website
 ├── templates/                          # Biểu mẫu gốc dùng cho Agent & Contributor
+│   ├── best-practice.md                # Biểu mẫu thực hành chuẩn mực theo lĩnh vực
 │   ├── knowledge-note-template.md      # Biểu mẫu ghi chép kiến thức
 │   ├── book-note-template.md           # Biểu mẫu tóm tắt sách
 │   ├── troubleshooting-template.md     # Biểu mẫu xử lý sự cố & post-mortem
@@ -147,18 +158,21 @@ _(Lệnh trả về mã thoát `0` và sinh thư mục `site/`)._
 Hệ thống hỗ trợ 2 lộ trình ghi nhận tri thức linh hoạt:
 
 ### Lộ trình 1: Tiếp nhận nhanh qua Knowledge Inbox (Khuyến nghị cho công việc thực tế)
+
 1. Tạo file ghi chú thô trong `inbox/` (ví dụ: `inbox/pg-timeout.md`) chứa log lỗi, câu query, hoặc ý tưởng thô.
 2. Yêu cầu AI Agent kích hoạt skill **`capture-knowledge`** để tự động kiểm tra trùng lặp, chọn template chuẩn hóa và phân loại vào `docs/` hoặc `labs/`.
 
 ### Lộ trình 2: Tự biên soạn bài bản qua Templates
+
 1. **Chọn Template**: Mở thư mục `templates/` hoặc xem tại `docs/starter-templates/`:
+   - `best-practice.md`: Quy chuẩn sản xuất, giải pháp tái sử dụng theo domain (Best Practice).
    - `knowledge-note-template.md`: Phân tích chuyên sâu cơ chế kiến trúc.
    - `book-note-template.md`: Chắt lọc mô hình tư duy từ sách kinh điển.
    - `troubleshooting-template.md`: Phân tích sự cố, Root Cause Analysis & Post-mortem.
    - `how-to-template.md`: Hướng dẫn quy trình thao tác và cấu hình thực tế.
    - `code-recipe-template.md`: Tập hợp các đoạn code hoặc truy vấn SQL tối ưu.
    - `hands-on-lab-template.md`: Thí nghiệm đo lường hiệu năng và benchmark.
-2. **Soạn thảo**: Lưu file vào đúng thư mục tương ứng trong `docs/<topic>/<ten-bai>.md`.
+2. **Soạn thảo**: Lưu file vào đúng thư mục tương ứng trong `docs/<topic>/<ten-bai>.md` hoặc `docs/<topic>/best-practices/<topic>.md`.
    - Tuân thủ nguyên tắc: Giải thích bằng tiếng Việt, giữ nguyên thuật ngữ tiếng Anh.
    - Đính kèm link tài liệu chính thức (`Official Documentation`).
 3. **Cập nhật Mục Lục**: Thêm đường dẫn bài viết vào phần `nav` trong tệp `mkdocs.yml`.
@@ -168,17 +182,19 @@ Hệ thống hỗ trợ 2 lộ trình ghi nhận tri thức linh hoạt:
 
 ## 6. Hướng Dẫn Kích Hoạt Antigravity Agent Skills
 
-Dự án tích hợp sẵn **bộ 7 Antigravity Agent Skills** tại `.agents/skills/`. Bạn có thể yêu cầu AI Agent kích hoạt trực tiếp trong chat box:
+Dự án tích hợp sẵn **bộ 9 Antigravity Agent Skills** tại `.agents/skills/`. Bạn có thể yêu cầu AI Agent kích hoạt trực tiếp trong chat box:
 
-| Kỹ năng (Skill) | Mục đích & Ngữ cảnh sử dụng | Lệnh mẫu kích hoạt |
-| :--- | :--- | :--- |
-| **`document-investigation`** | Xử lý hồ sơ điều tra kỹ thuật nhiều bước, bảo tồn tiến trình thời gian và cập nhật lũy tiến. | *"Hãy xử lý hồ sơ điều tra tại inbox/investigations/inv-001/notes.md bằng skill document-investigation."* |
-| **`capture-knowledge`** | Thu thập, phân loại ghi chú thô từ `inbox/`, kiểm tra trùng lặp, cross-linking. | *"Hãy xử lý ghi chú tại inbox/sample-pg-lock-incident.md bằng skill capture-knowledge."* |
-| **`import-notebooklm`** | Tích hợp và kiểm chứng kỹ thuật các ghi chú nghiên cứu xuất từ NotebookLM. | *"Dùng import-notebooklm để đưa ghi chú NotebookLM vào mục PostgreSQL."* |
-| **`research-topic`** | Nghiên cứu sâu chủ đề kỹ thuật đối chiếu official docs, RFCs và JEPs. | *"Nghiên cứu cơ chế Generational ZGC trong Java 21 bằng skill research-topic."* |
-| **`summarize-book`** | Trích xuất mô hình tư duy, failure modes và production mapping từ sách. | *"Tóm tắt Chương 7 cuốn Designing Data-Intensive Applications bằng skill summarize-book."* |
-| **`create-hands-on-lab`** | Khởi tạo phòng thí nghiệm Docker Compose cô lập trong `labs/`. | *"Tạo lab đo lường HikariCP Pool Sizing bằng skill create-hands-on-lab."* |
-| **`review-knowledge`** | Rà soát tính chính xác, phát hiện API lỗi thời và chạy `mkdocs build --strict`. | *"Audit toàn bộ liên kết nội bộ và chạy build strict bằng skill review-knowledge."* |
+| Kỹ năng (Skill)              | Mục đích & Ngữ cảnh sử dụng                                                                                                   | Lệnh mẫu kích hoạt                                                                                                  |
+| :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------ |
+| **`import-txt-notes`**       | Nhập ghi chú TXT từ `nodes/`, tự động chuyển đổi Markdown và phân loại menu MkDocs theo Domain & Type.                        | _"Nhập toàn bộ ghi chú từ thư mục nodes/ bằng skill import-txt-notes."_                                             |
+| **`manage-best-practices`**  | Trích xuất, chuẩn hóa và duy trì Best Practices theo domain với 4 cấp độ bằng chứng (Official, Verified, Context, Candidate). | _"Trích xuất bài học tối ưu JSONB từ hồ sơ điều tra inv-001 thành Best Practice bằng skill manage-best-practices."_ |
+| **`document-investigation`** | Xử lý hồ sơ điều tra kỹ thuật nhiều bước, bảo tồn tiến trình thời gian và cập nhật lũy tiến.                                  | _"Hãy xử lý hồ sơ điều tra tại inbox/investigations/inv-001/notes.md bằng skill document-investigation."_           |
+| **`capture-knowledge`**      | Thu thập, phân loại ghi chú thô từ `inbox/`, kiểm tra trùng lặp, cross-linking.                                               | _"Hãy xử lý ghi chú tại inbox/sample-pg-lock-incident.md bằng skill capture-knowledge."_                            |
+| **`import-notebooklm`**      | Tích hợp và kiểm chứng kỹ thuật các ghi chú nghiên cứu xuất từ NotebookLM.                                                    | _"Dùng import-notebooklm để đưa ghi chú NotebookLM vào mục PostgreSQL."_                                            |
+| **`research-topic`**         | Nghiên cứu sâu chủ đề kỹ thuật đối chiếu official docs, RFCs và JEPs.                                                         | _"Nghiên cứu cơ chế Generational ZGC trong Java 21 bằng skill research-topic."_                                     |
+| **`summarize-book`**         | Trích xuất mô hình tư duy, failure modes và production mapping từ sách.                                                       | _"Tóm tắt Chương 7 cuốn Designing Data-Intensive Applications bằng skill summarize-book."_                          |
+| **`create-hands-on-lab`**    | Khởi tạo phòng thí nghiệm Docker Compose cô lập trong `labs/`.                                                                | _"Tạo lab đo lường HikariCP Pool Sizing bằng skill create-hands-on-lab."_                                           |
+| **`review-knowledge`**       | Rà soát tính chính xác, phát hiện API lỗi thời và chạy `mkdocs build --strict`.                                               | _"Audit toàn bộ liên kết nội bộ và chạy build strict bằng skill review-knowledge."_                                 |
 
 ---
 
@@ -215,12 +231,14 @@ Mọi đóng góp vào repository này đều phải tuân thủ nghiêm ngặt 
 
 ## 9. Hướng Dẫn Sử Dụng Các Agent Skills (Detailed Skill Use Cases)
 
-Hệ thống cung cấp quy trình quản trị tri thức hợp nhất thông qua 6 Agent Skills chuyên biệt:
+Hệ thống cung cấp quy trình quản trị tri thức hợp nhất thông qua 9 Agent Skills chuyên biệt:
 
 ### 9.1. Use Case: `import-notebooklm`
+
 Sử dụng khi bạn xuất các ghi chú tổng hợp hoặc tài liệu nghiên cứu từ Google NotebookLM để tích hợp vào MkDocs Knowledge Base.
 
 **Câu lệnh mẫu:**
+
 ```text
 Input:
 inbox/notebooklm-ddia-transactions.md
@@ -238,9 +256,11 @@ Yêu cầu thực thi:
 ---
 
 ### 9.2. Use Case: `capture-knowledge` (Knowledge Inbox & Real-World Triage)
+
 Sử dụng khi tiếp nhận thông tin thô từ thực chiến: ghi chú sự cố (Post-mortem), lỗi production timeout, câu query tuning, hoặc hướng dẫn cấu hình nhanh.
 
 **Câu lệnh mẫu (Xử lý sự cố từ Inbox):**
+
 ```text
 Input:
 inbox/samples/sample-pg-lock-incident.md
@@ -254,6 +274,7 @@ Hãy dùng skill 'capture-knowledge' để xử lý ghi chú sự cố này:
 ```
 
 **Câu lệnh mẫu (Lưu trữ SQL Recipe tối ưu):**
+
 ```text
 Tôi vừa viết một câu query giám sát connection state và active queries trong PostgreSQL:
 [Dán SQL query vào đây]
@@ -264,9 +285,11 @@ Hãy dùng skill 'capture-knowledge' để chuẩn hóa thành Code Recipe theo 
 ---
 
 ### 9.3. Use Case: `research-topic`
+
 Sử dụng khi cần nghiên cứu chuyên sâu một chủ đề kỹ thuật nền tảng, cơ chế hoạt động bên dưới (Under the hood) đối chiếu từ Official Documentation.
 
 **Câu lệnh mẫu:**
+
 ```text
 Hãy sử dụng skill 'research-topic' để nghiên cứu chủ đề:
 'Generational ZGC trong Java 21 LTS (JEP 439)'
@@ -282,9 +305,11 @@ Yêu cầu:
 ---
 
 ### 9.4. Use Case: `summarize-book`
+
 Sử dụng khi đúc kết kiến trúc và mô hình tư duy từ các cuốn sách kỹ thuật kinh điển.
 
 **Câu lệnh mẫu:**
+
 ```text
 Hãy sử dụng skill 'summarize-book' để trích xuất tinh hoa từ cuốn sách:
 'Designing Data-Intensive Applications (Martin Kleppmann)' - Chương 5 (Replication)
@@ -299,9 +324,11 @@ Yêu cầu:
 ---
 
 ### 9.5. Use Case: `create-hands-on-lab`
+
 Sử dụng khi cần tạo một phòng thí nghiệm thực nghiệm độc lập với Docker Compose, seed data, và benchmark scripts.
 
 **Câu lệnh mẫu:**
+
 ```text
 Hãy sử dụng skill 'create-hands-on-lab' để thiết kế lab:
 'HikariCP Connection Pool Tuning & Leak Detection'
@@ -317,9 +344,11 @@ Yêu cầu:
 ---
 
 ### 9.6. Use Case: `review-knowledge`
+
 Sử dụng khi kiểm định chất lượng, rà soát link hỏng, phát hiện deprecated APIs hoặc kiểm tra strict build định kỳ.
 
 **Câu lệnh mẫu:**
+
 ```text
 Hãy kích hoạt skill 'review-knowledge' để audit toàn bộ kho lưu trữ:
 1. Quét toàn bộ relative links trong docs/ đảm bảo không có link chết (dead links).
@@ -331,12 +360,14 @@ Hãy kích hoạt skill 'review-knowledge' để audit toàn bộ kho lưu trữ
 ---
 
 ### 9.7. Use Case: `document-investigation` (Engineering Investigation Management)
+
 Sử dụng khi xử lý các cuộc điều tra kỹ thuật nhiều bước, các bài toán gỡ lỗi phức tạp kéo dài nhiều ngày, bảo tồn toàn bộ các thử nghiệm thất bại và cập nhật lũy tiến khi có bằng chứng mới.
 
 > [!NOTE]
-> *Lưu ý*: Các ví dụ dưới đây là **mô phỏng minh họa quy trình (Demonstrations)**, không phải số liệu đo đạc thực tế trên hệ thống sản xuất thật của bạn.
+> _Lưu ý_: Các ví dụ dưới đây là **mô phỏng minh họa quy trình (Demonstrations)**, không phải số liệu đo đạc thực tế trên hệ thống sản xuất thật của bạn.
 
 #### Ví Dụ 1 — PostgreSQL Query Optimization (Điều Tra Tối Ưu Truy Vấn Đa Kế Hoạch)
+
 ```text
 Input:
 inbox/investigations/inv-202610-pg-jsonb-tuning/notes.md
@@ -349,6 +380,7 @@ Hãy dùng skill 'document-investigation' để tổng hợp hồ sơ điều tr
 ```
 
 #### Ví Dụ 2 — Spring Boot Troubleshooting (Điều Tra Lỗi Rollback & Connection Timeout)
+
 ```text
 Input:
 inbox/investigations/inv-202610-spring-tx-rollback/notes.md
@@ -362,6 +394,7 @@ Hãy dùng skill 'document-investigation' để phân tích:
 ```
 
 #### Ví Dụ 3 — AWS Infrastructure Investigation (Thử Nghiệm Chiến Lược Export Dữ Liệu Aurora)
+
 ```text
 Input:
 inbox/investigations/inv-202610-aws-aurora-export/notes.md
@@ -374,6 +407,7 @@ Hãy dùng skill 'document-investigation' để xây dựng case study:
 ```
 
 #### Ví Dụ 4 — Updating an Existing Investigation (Cập Nhật Lũy Tiến Cho Điều Tra Đang Diễn Ra)
+
 ```text
 Hồ sơ hiện có: docs/postgresql/investigations/inv-001-jsonb-tuning.md
 Dữ liệu mới bổ sung: inbox/investigations/inv-202610-pg-jsonb-tuning/notes.md (Mục "Bước 4: Kiểm tra hành vi Autovacuum trên GIN index")
@@ -385,3 +419,116 @@ Hãy dùng skill 'document-investigation' để cập nhật lũy tiến:
 4. Giữ nguyên toàn bộ lịch sử Thí nghiệm 1, 2, 3 và kiểm tra strict build.
 ```
 
+---
+
+### 9.7. Use Case: `manage-best-practices`
+
+Sử dụng khi bạn cần trích xuất, tổ chức, hoặc cập nhật các quy chuẩn sản xuất (**Best Practices**) cho từng lĩnh vực công nghệ (`postgresql`, `java`, `spring-boot`, `aws`, `system-design`), phân định 4 cấp độ bằng chứng (`Official Guidance`, `Verified Experiment`, `Context-specific Finding`, `Candidate`) và phân tích chuyên sâu _Why It Works_ cùng _When NOT to Use_.
+
+#### Ví Dụ 1 — PostgreSQL: Trích xuất bài học tối ưu truy vấn từ hồ sơ điều tra
+
+```text
+Hồ sơ điều tra nguồn: docs/postgresql/investigations/inv-001-jsonb-tuning.md
+
+Hãy dùng skill 'manage-best-practices' để tổng hợp thành Best Practice:
+1. Đọc kết quả xác minh từ hồ sơ điều tra INV-001.
+2. Tạo trang: docs/postgresql/best-practices/jsonb-query-optimization.md.
+3. Làm nổi bật phương pháp: GIN jsonb_path_ops kết hợp nén LZ4 TOAST cho PostgreSQL 14+, toán tử @>.
+4. Gán Evidence Level: Verified Experiment (nhanh gấp 50 lần, index giảm 83%).
+5. Thiết lập liên kết chéo hai chiều với inv-001-jsonb-tuning.md và docs/postgresql/best-practices/index.md.
+```
+
+#### Ví Dụ 2 — Modern Java: Xây dựng quy chuẩn xử lý ngoại lệ chuẩn mực
+
+```text
+Chủ đề: Robust Exception Handling trong Modern Java 21+
+
+Hãy dùng skill 'manage-best-practices' để biên soạn quy chuẩn:
+1. Tạo trang: docs/java/best-practices/exception-handling.md.
+2. Quy chuẩn hóa: Bảo toàn root cause qua Chained Exceptions, BaseDomainException mang ngữ cảnh, Sealed Exceptions, và quản lý ngoại lệ trong Virtual Threads.
+3. Gán Evidence Level: Official Guidance (Oracle JLS & Effective Java).
+4. Cập nhật docs/java/best-practices/index.md và mkdocs.yml.
+```
+
+#### Ví Dụ 3 — Spring Boot: Cấu hình WebClient chống sụp đổ dây chuyền
+
+```text
+Chủ đề: Resilient WebClient Configuration trong Spring Boot 3.3+
+
+Hãy dùng skill 'manage-best-practices' để xây dựng quy chuẩn:
+1. Tạo trang: docs/spring-boot/best-practices/resilient-webclient.md.
+2. Bao gồm: 4 tầng timeout (Connect, Response, Read Idle, Write Idle) với Reactor Netty, ConnectionProvider pool sizing, và Retry có Exponential Backoff kèm Jitter.
+3. Chỉ rõ chống chỉ định: Không dùng .block() trên Reactor EventLoop threads.
+4. Gán Evidence Level: Official Guidance (Spring & Reactor Netty Docs).
+5. Cập nhật navigation và kiểm tra strict build.
+```
+
+#### Ví Dụ 4 — AWS: Chuyển đổi thử nghiệm trích xuất dữ liệu Aurora sang Best Practice
+
+```text
+Thử nghiệm nguồn: Trích xuất dữ liệu lớn từ Amazon Aurora PostgreSQL sang Amazon S3
+
+Hãy dùng skill 'manage-best-practices' để chuẩn hóa kiến trúc:
+1. Tạo trang: docs/aws/best-practices/aurora-s3-export.md.
+2. So sánh và tối ưu: aws_s3.query_export_to_s3() kết hợp S3 Gateway VPC Endpoint và IAM Role, loại bỏ máy trung gian EC2 và phí NAT Gateway.
+3. Gán Evidence Level: Context-specific Finding (tối ưu cho dataset > 50GB khi có VPC Gateway Endpoint).
+4. Cập nhật docs/aws/best-practices/index.md và mkdocs.yml.
+```
+
+#### Ví Dụ 5 — Updating an Existing Best Practice (Cập Nhật Lũy Tiến Cho Best Practice Hiện Có)
+
+```text
+Bài viết hiện có: docs/postgresql/best-practices/jsonb-query-optimization.md
+Dữ liệu cập nhật: Tối ưu hóa bộ nhớ cho GIN VACUUM trong PostgreSQL 17 và tham số gin_pending_list_limit
+
+Hãy dùng skill 'manage-best-practices' để cập nhật:
+1. Mở bài viết hiện có, bổ sung mục Version Evolution cho PostgreSQL 16 & 17.
+2. Giữ nguyên toàn bộ kết luận đã được kiểm chứng của PostgreSQL 16, không ghi đè lịch sử.
+3. Bổ sung khuyến nghị điều chỉnh gin_pending_list_limit = '32MB' cho hệ thống có tốc độ ghi cao.
+4. Chạy python -m mkdocs build --strict để xác nhận không có lỗi liên kết.
+```
+
+---
+
+### 9.8. Use Case: `import-txt-notes`
+
+Sử dụng khi bạn ghi chép các ghi chú kỹ thuật thô dưới dạng file text `.txt` trong thư mục `nodes/` và muốn tự động chuyển đổi thành tài liệu Markdown chuẩn mực, tích hợp vào đúng menu navigation theo **Domain** và **Type**.
+
+#### Định Dạng Header Bắt Buộc Trong File TXT
+
+```text
+Item: <Tiêu đề tài liệu>
+Type: <Best Practice | Concept | How-to | Investigation | Troubleshooting | Lab | Recipe>
+Domain: <PostgreSQL | Java | Spring Boot | AWS | System Design>
+
+Content:
+<Nội dung ghi chú...>
+```
+
+#### Ví Dụ 1 — Import Một File Đơn Lẻ (Single File)
+
+```text
+Hãy dùng skill 'import-txt-notes' để import file nodes/postgresql-index-deduplication.txt:
+1. Đọc và xác thực metadata (Item, Type, Domain).
+2. Tạo file docs/postgresql/best-practices/postgresql-b-tree-index-deduplication.md.
+3. Cập nhật navigation trong mkdocs.yml dưới PostgreSQL -> Best Practices.
+4. Ghi nhận manifest và chạy mkdocs build --strict.
+```
+
+#### Ví Dụ 2 — Import Hàng Loạt Toàn Bộ Thư Mục (Batch Mode)
+
+```text
+Hãy dùng skill 'import-txt-notes' ở chế độ batch:
+1. Quét toàn bộ file .txt trong thư mục nodes/.
+2. Bỏ qua các file đã import không có thay đổi (idempotent).
+3. Báo cáo bảng tổng kết (Imported, Skipped, Conflicts, Failed).
+4. Xác thực toàn bộ website với mkdocs build --strict.
+```
+
+#### Ví dụ 3 - Note simple
+
+Using skill 'import-txt-notes' import file: nodes/postgresql-export-import-data.txt
+
+Read Item, Type, Domain and Content.
+Convert the note into structured Markdown, use Item as the menu label, place it under the Type category of the corresponding technology domain, update MkDocs navigation and run mkdocs build --strict.
+Preserve the original TXT

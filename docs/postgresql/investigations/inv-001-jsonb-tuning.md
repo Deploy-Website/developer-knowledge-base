@@ -6,6 +6,7 @@
 > **Mức độ tác động**: P2 - Độ trễ tìm kiếm Audit Log tăng đột biến (P99 vọt từ 15ms lên 420ms trên 2.500.000 dòng)  
 > **Thời gian điều tra**: 2026-10-15  
 > **Tài liệu gốc tại Inbox**: [`inbox/investigations/inv-001-pg-jsonb-tuning/notes.md`](https://github.com/vinh-nt/developer-knowledge-base/tree/main/inbox/investigations/inv-001-pg-jsonb-tuning/notes.md)  
+> **Best Practice xuất bản**: [Best Practice: Tối Ưu Hóa Truy Vấn & Chỉ Mục JSONB](../best-practices/jsonb-query-optimization.md)  
 > **Bài viết liên quan**: [PostgreSQL EXPLAIN ANALYZE](../explain-analyze.md) | [PostgreSQL Knowledge Hub](../index.md)  
 
 ---
@@ -168,6 +169,7 @@ graph TD
   - [JSON Types: jsonb Indexing](https://www.postgresql.org/docs/current/datatype-json.html#DATATYPE-JSONB-INDEXING)
   - [Storage TOAST & Compression](https://www.postgresql.org/docs/current/storage-toast.html)
 - **Tài liệu liên quan trong Knowledge Base**:
+  - [Best Practice: Tối Ưu Hóa Truy Vấn & Chỉ Mục JSONB](../best-practices/jsonb-query-optimization.md)
   - [PostgreSQL EXPLAIN ANALYZE: Giải mã Execution Plan](../explain-analyze.md)
   - [PostgreSQL Troubleshooting: Lock Contention](../troubleshooting-locks.md)
   - [PostgreSQL Knowledge Hub](../index.md)

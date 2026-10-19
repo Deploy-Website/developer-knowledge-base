@@ -28,7 +28,14 @@ Trọng tâm kiến trúc PostgreSQL gồm 4 tầng cốt lõi:
 
 ---
 
-## 2. Các Bài Phân Tích Chuyên Sâu & Xử Lý Sự Cố (Deep Dives & Troubleshooting)
+## 2. Quy Chuẩn Thực Hành Tốt Nhất (Production Best Practices)
+
+- 🏆 **[PostgreSQL Best Practices Hub](best-practices/index.md)**: Hệ thống hóa các quy chuẩn vận hành, tối ưu truy vấn và chỉ mục chuẩn production.
+  - 🚀 **[Best Practice: Tối Ưu Hóa Truy Vấn & Chỉ Mục JSONB](best-practices/jsonb-query-optimization.md)**: Áp dụng GIN `jsonb_path_ops` và nén LZ4 TOAST, tăng tốc 50x, giảm 83% kích thước index.
+
+---
+
+## 3. Các Bài Phân Tích Chuyên Sâu & Xử Lý Sự Cố (Deep Dives & Troubleshooting)
 
 - 🚀 **[PostgreSQL EXPLAIN ANALYZE: Bản chất & Tối ưu Execution Plan](explain-analyze.md)**: Hướng dẫn chuyên sâu từ bản chất thuật toán Cost Model, phân biệt `Seq Scan` vs `Index Scan` vs `Bitmap Scan`, đọc thông số Buffer Hits/Reads, cho đến cạm bẫy JIT Compilation và kịch bản thực nghiệm Dockerized Lab 1.000.000 dòng.
 - 🛠️ **[Troubleshooting: Chẩn đoán & Xử lý Lock Contention / Blocking Queries](troubleshooting-locks.md)**: Phân tích cơ chế Lock Queue FIFO starvation, phát hiện blocking process qua `pg_blocking_pids()`, câu lệnh cứu nguy khẩn cấp và thiết lập `lock_timeout` bảo vệ production.
@@ -36,7 +43,7 @@ Trọng tâm kiến trúc PostgreSQL gồm 4 tầng cốt lõi:
 
 ---
 
-## 3. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
+## 4. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
 
 ### A. Indexing Strategies & Data Structures
 - **B-Tree Internals**: Cấu trúc leaf nodes, high keys, nbtree deduplication trong PostgreSQL 13+.

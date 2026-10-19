@@ -33,7 +33,14 @@ Thiết kế hệ thống phân tán cấp Senior Architect tập trung vào 4 b
 
 ---
 
-## 2. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
+## 2. Quy Chuẩn Thực Hành Tốt Nhất (Production Best Practices)
+
+- 🏆 **[System Design Best Practices Hub](best-practices/index.md)**: Hệ thống hóa các quy chuẩn thiết kế hệ thống phân tán, xử lý giao dịch và phòng vệ lỗi.
+  - 🔄 **[Best Practice: Thiết Kế Idempotency & Phòng Vệ Sự Cố](best-practices/idempotency-and-resilience.md)**: Hiện thực hóa Idempotency Key với Redis Lock và PostgreSQL Unique Constraints, chống trừ tiền 2 lần.
+
+---
+
+## 3. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
 
 ### A. The Dual-Write Problem & Transactional Outbox Pattern
 - **Vấn đề cốt lõi**: Khi một ứng dụng phải ghi vào Database đồng thời gửi Message vào Message Broker (Kafka/RabbitMQ), không thể có một giao dịch cục bộ bao trùm cả hai. Nếu một bên thành công và bên kia thất bại, hệ thống rơi vào trạng thái bất nhất (Inconsistent State).

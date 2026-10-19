@@ -42,7 +42,14 @@ Kiến trúc AWS cấp Senior Architect tuân thủ 5 trụ cột cốt lõi:
 
 ---
 
-## 2. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
+## 2. Quy Chuẩn Thực Hành Tốt Nhất (Production Best Practices)
+
+- 🏆 **[AWS Cloud Architecture Best Practices Hub](best-practices/index.md)**: Hệ thống hóa các quy chuẩn thiết kế đám mây an toàn, tối ưu chi phí và chịu lỗi cao.
+  - ☁️ **[Best Practice: Export Dữ Liệu Lớn Trực Tiếp Từ Aurora Sang S3](best-practices/aurora-s3-export.md)**: Tận dụng `aws_s3.query_export_to_s3()` và VPC Gateway Endpoint, tiết kiệm 100% phí NAT Gateway, tăng tốc 4x.
+
+---
+
+## 3. Danh Mục Chủ Đề Đang Phát Triển (Curated Topics)
 
 ### A. VPC Networking & PrivateLink
 - **VPC Subnet Sizing**: Phân bổ dải CIDR hợp lý, tính toán số lượng IP dự phòng cho Auto-scaling và rolling updates.
