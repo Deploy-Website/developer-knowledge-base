@@ -6,6 +6,8 @@
 
 > Hệ thống lưu trữ, tra cứu và chắt lọc tri thức chuyên sâu dành cho Senior Software Architect & Backend/Cloud Engineers, tập trung vào 5 trụ cột: **PostgreSQL**, **Java**, **Spring Boot**, **AWS**, và **System Design**.
 
+Deploy github page: python -m mkdocs gh-deploy --force
+
 ---
 
 ## 📑 Mục Lục
