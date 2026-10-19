@@ -1,0 +1,2090 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal Technical Knowledge Base for PostgreSQL, Java, Spring Boot, AWS, and System Design.">
+      
+      
+        <meta name="author" content="Senior Software Architect & AI Agent Engineer">
+      
+      
+        <link rel="canonical" href="https://github.com/vinh-nt/developer-knowledge-base/postgresql/troubleshooting-locks/">
+      
+      
+        <link rel="prev" href="../explain-analyze/">
+      
+      
+        <link rel="next" href="../investigations/inv-001-jsonb-tuning/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Troubleshooting: Lock Contention - Developer Knowledge Base</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#troubleshooting-chan-oan-xu-ly-lock-contention-blocking-queries-trong-postgresql-16" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Developer Knowledge Base" class="md-header__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Developer Knowledge Base
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Troubleshooting: Lock Contention
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Chuyển sang Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Chuyển sang Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Trang chủ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  PostgreSQL
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../java/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Java
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../spring-boot/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Spring Boot
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../aws/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  AWS
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../system-design/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  System Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../standards/agents-governance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Engineering Standards
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Developer Knowledge Base" class="md-nav__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Developer Knowledge Base
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trang chủ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PostgreSQL
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explain-analyze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: EXPLAIN ANALYZE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting: Lock Contention
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting: Lock Contention
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-tom-tat-hien-tuong-tac-ong-symptom-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Tóm Tắt Hiện Tượng &amp; Tác Động (Symptom &amp; Impact)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Tóm Tắt Hiện Tượng &amp; Tác Động (Symptom &amp; Impact)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trieu-chung-ien-hinh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Triệu chứng điển hình
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-quy-trinh-chan-oan-khan-cap-emergency-diagnostic-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Quy Trình Chẩn Đoán Khẩn Cấp (Emergency Diagnostic Workflow)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Quy Trình Chẩn Đoán Khẩn Cấp (Emergency Diagnostic Workflow)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-kiem-tra-cac-cau-truy-van-ang-phai-cho-lock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1. Kiểm tra các câu truy vấn đang phải chờ Lock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-tim-chinh-xac-pid-cua-tien-trinh-gay-nghen-blocking-pid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2. Tìm chính xác PID của tiến trình gây nghẽn (Blocking PID)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-phan-tich-nguyen-nhan-goc-re-root-cause-analysis-rca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Phân Tích Nguyên Nhân Gốc Rễ (Root Cause Analysis - RCA)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Phân Tích Nguyên Nhân Gốc Rễ (Root Cause Analysis - RCA)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#co-che-hang-oi-khoa-lock-queue-fifo-starvation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cơ chế hàng đợi khóa (Lock Queue FIFO Starvation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tai-sao-lai-xay-ra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tại sao lại xảy ra?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-bien-phap-khac-phuc-tuc-thoi-immediate-mitigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Biện Pháp Khắc Phục Tức Thời (Immediate Mitigation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Biện Pháp Khắc Phục Tức Thời (Immediate Mitigation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lua-chon-1-huy-cau-lenh-gay-nghen-graceful-cancel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lựa chọn 1: Hủy câu lệnh gây nghẽn (Graceful Cancel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-chon-2-ngat-ket-noi-tien-trinh-ngay-lap-tuc-force-terminate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lựa chọn 2: Ngắt kết nối tiến trình ngay lập tức (Force Terminate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-giai-phap-phong-ngua-triet-e-long-term-prevention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Giải Pháp Phòng Ngừa Triệt Để (Long-Term Prevention)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Giải Pháp Phòng Ngừa Triệt Để (Long-Term Prevention)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-luon-thiet-lap-lock_timeout-truoc-khi-chay-ddl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Luôn thiết lập lock_timeout trước khi chạy DDL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-thiet-lap-gioi-han-giao-dich-nhan-roi-idle_in_transaction_session_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Thiết lập giới hạn giao dịch nhàn rỗi (idle_in_transaction_session_timeout)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tao-index-voi-tu-khoa-concurrently" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Tạo Index với từ khóa CONCURRENTLY
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lien-ket-cheo-tai-lieu-lien-quan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Liên Kết Chéo &amp; Tài Liệu Liên Quan
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../investigations/inv-001-jsonb-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation: JSONB GIN Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../java/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Java
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../spring-boot/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spring Boot
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Spring Boot
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../aws/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../system-design/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Design
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    System Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Standards
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engineering Standards
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/agents-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance & Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/unified-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quy Trình Quản Trị Hợp Nhất
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/investigation-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quản Trị Điều Tra (Investigations)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/theme-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kiến trúc & Theme Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Templates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Templates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/knowledge-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/book-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Book Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-To Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/code-recipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Recipe Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/hands-on-lab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hands-on Lab Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/investigation-raw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raw Investigation Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/investigation-case/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation Case Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-tom-tat-hien-tuong-tac-ong-symptom-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Tóm Tắt Hiện Tượng &amp; Tác Động (Symptom &amp; Impact)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Tóm Tắt Hiện Tượng &amp; Tác Động (Symptom &amp; Impact)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#trieu-chung-ien-hinh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Triệu chứng điển hình
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-quy-trinh-chan-oan-khan-cap-emergency-diagnostic-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Quy Trình Chẩn Đoán Khẩn Cấp (Emergency Diagnostic Workflow)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Quy Trình Chẩn Đoán Khẩn Cấp (Emergency Diagnostic Workflow)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-kiem-tra-cac-cau-truy-van-ang-phai-cho-lock" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.1. Kiểm tra các câu truy vấn đang phải chờ Lock
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-tim-chinh-xac-pid-cua-tien-trinh-gay-nghen-blocking-pid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2.2. Tìm chính xác PID của tiến trình gây nghẽn (Blocking PID)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-phan-tich-nguyen-nhan-goc-re-root-cause-analysis-rca" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Phân Tích Nguyên Nhân Gốc Rễ (Root Cause Analysis - RCA)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Phân Tích Nguyên Nhân Gốc Rễ (Root Cause Analysis - RCA)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#co-che-hang-oi-khoa-lock-queue-fifo-starvation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cơ chế hàng đợi khóa (Lock Queue FIFO Starvation)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tai-sao-lai-xay-ra" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tại sao lại xảy ra?
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-bien-phap-khac-phuc-tuc-thoi-immediate-mitigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Biện Pháp Khắc Phục Tức Thời (Immediate Mitigation)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Biện Pháp Khắc Phục Tức Thời (Immediate Mitigation)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#lua-chon-1-huy-cau-lenh-gay-nghen-graceful-cancel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lựa chọn 1: Hủy câu lệnh gây nghẽn (Graceful Cancel)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lua-chon-2-ngat-ket-noi-tien-trinh-ngay-lap-tuc-force-terminate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Lựa chọn 2: Ngắt kết nối tiến trình ngay lập tức (Force Terminate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-giai-phap-phong-ngua-triet-e-long-term-prevention" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Giải Pháp Phòng Ngừa Triệt Để (Long-Term Prevention)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Giải Pháp Phòng Ngừa Triệt Để (Long-Term Prevention)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-luon-thiet-lap-lock_timeout-truoc-khi-chay-ddl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Luôn thiết lập lock_timeout trước khi chạy DDL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-thiet-lap-gioi-han-giao-dich-nhan-roi-idle_in_transaction_session_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Thiết lập giới hạn giao dịch nhàn rỗi (idle_in_transaction_session_timeout)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-tao-index-voi-tu-khoa-concurrently" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Tạo Index với từ khóa CONCURRENTLY
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-lien-ket-cheo-tai-lieu-lien-quan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Liên Kết Chéo &amp; Tài Liệu Liên Quan
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="troubleshooting-chan-oan-xu-ly-lock-contention-blocking-queries-trong-postgresql-16">Troubleshooting: Chẩn Đoán &amp; Xử Lý Lock Contention / Blocking Queries Trong PostgreSQL 16+<a class="headerlink" href="#troubleshooting-chan-oan-xu-ly-lock-contention-blocking-queries-trong-postgresql-16" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Phân loại</strong>: PostgreSQL Internals &amp; Production Incident Response<br />
+<strong>Mức độ nghiêm trọng</strong>: P1 / P2 - Nguy cơ làm cạn kiệt Connection Pool và tê liệt toàn bộ ứng dụng<br />
+<strong>Phiên bản áp dụng</strong>: PostgreSQL 12, 13, 14, 15, 16+<br />
+<strong>Tài liệu chính thức</strong>:<br />
+- <a href="https://www.postgresql.org/docs/current/explicit-locking.html">PostgreSQL Documentation: Explicit Locking</a><br />
+- <a href="https://www.postgresql.org/docs/current/monitoring-stats.html#MONITORING-PG-STAT-ACTIVITY-VIEW">PostgreSQL Documentation: pg_stat_activity</a><br />
+- <a href="https://www.postgresql.org/docs/current/view-pg-locks.html">PostgreSQL Documentation: pg_locks System View</a><br />
+<strong>Bài viết liên quan</strong>: <a href="../explain-analyze/">PostgreSQL EXPLAIN ANALYZE</a> | <a href="../">PostgreSQL Knowledge Hub</a>  </p>
+</blockquote>
+<hr />
+<h2 id="1-tom-tat-hien-tuong-tac-ong-symptom-impact">1. Tóm Tắt Hiện Tượng &amp; Tác Động (Symptom &amp; Impact)<a class="headerlink" href="#1-tom-tat-hien-tuong-tac-ong-symptom-impact" title="Permanent link">&para;</a></h2>
+<p>Trong môi trường Production có lưu lượng truy cập cao, một trong những sự cố nghiêm trọng nhất là hiện tượng <strong>Lock Contention</strong> (Tranh chấp khóa).</p>
+<h3 id="trieu-chung-ien-hinh">Triệu chứng điển hình<a class="headerlink" href="#trieu-chung-ien-hinh" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>API Timeout hàng loạt</strong>: Toàn bộ các API liên quan đến một hoặc nhiều bảng đồng loạt trả về HTTP <code>504 Gateway Timeout</code>.</li>
+<li><strong>Connection Pool Exhaustion</strong>: Ứng dụng Backend (Spring Boot / Node.js) báo lỗi cạn kiệt pool:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>org.postgresql.util.PSQLException: Connection is not available, request timed out after 30005ms.
+</span></code></pre></div></li>
+<li><strong>CPU Database cực thấp</strong>: CPU Server Database chỉ chạy dưới 10%, Disk I/O không cao, nhưng số lượng <code>active connections</code> tăng vọt chạm trần <code>max_connections</code>.</li>
+</ul>
+<hr />
+<h2 id="2-quy-trinh-chan-oan-khan-cap-emergency-diagnostic-workflow">2. Quy Trình Chẩn Đoán Khẩn Cấp (Emergency Diagnostic Workflow)<a class="headerlink" href="#2-quy-trinh-chan-oan-khan-cap-emergency-diagnostic-workflow" title="Permanent link">&para;</a></h2>
+<p>Khi hệ thống bị treo do khóa, hãy mở <code>psql</code> và thực thi các câu truy vấn sau:</p>
+<h3 id="21-kiem-tra-cac-cau-truy-van-ang-phai-cho-lock">2.1. Kiểm tra các câu truy vấn đang phải chờ Lock<a class="headerlink" href="#21-kiem-tra-cac-cau-truy-van-ang-phai-cho-lock" title="Permanent link">&para;</a></h3>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">SELECT</span><span class="w"> </span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">pid</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="n">usename</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">client_addr</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">application_name</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="k">state</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">wait_event_type</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">wait_event</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">query_start</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">duration</span><span class="p">,</span><span class="w"> </span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="n">query</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="k">FROM</span><span class="w"> </span><span class="n">pg_stat_activity</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">wait_event_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;Lock&#39;</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">duration</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</span></code></pre></div>
+<blockquote>
+<p>[!NOTE]
+Nếu thấy <code>wait_event_type = 'Lock'</code> và <code>wait_event = 'relation'</code>, câu truy vấn đang bị chặn ở cấp độ Table Lock.</p>
+</blockquote>
+<h3 id="22-tim-chinh-xac-pid-cua-tien-trinh-gay-nghen-blocking-pid">2.2. Tìm chính xác PID của tiến trình gây nghẽn (Blocking PID)<a class="headerlink" href="#22-tim-chinh-xac-pid-cua-tien-trinh-gay-nghen-blocking-pid" title="Permanent link">&para;</a></h3>
+<p>PostgreSQL cung cấp hàm tích hợp <code>pg_blocking_pids()</code> cực kỳ mạnh mẽ để truy vết cây phụ thuộc khóa:</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">SELECT</span><span class="w"> </span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">blocked_activity</span><span class="p">.</span><span class="n">pid</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocked_pid</span><span class="p">,</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">blocked_activity</span><span class="p">.</span><span class="n">usename</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocked_user</span><span class="p">,</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="n">blocking_pids</span><span class="p">.</span><span class="n">blocking_pid</span><span class="p">,</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">blocking_activity</span><span class="p">.</span><span class="n">usename</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocking_user</span><span class="p">,</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="n">blocking_activity</span><span class="p">.</span><span class="n">query</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocking_statement</span><span class="p">,</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="n">blocking_activity</span><span class="p">.</span><span class="k">state</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocking_state</span><span class="p">,</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">    </span><span class="n">now</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">blocking_activity</span><span class="p">.</span><span class="n">xact_start</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocking_xact_duration</span><span class="p">,</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="n">blocked_activity</span><span class="p">.</span><span class="n">query</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocked_statement</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="k">FROM</span><span class="w"> </span><span class="n">pg_stat_activity</span><span class="w"> </span><span class="n">blocked_activity</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="k">CROSS</span><span class="w"> </span><span class="k">JOIN</span><span class="w"> </span><span class="k">LATERAL</span><span class="w"> </span><span class="k">unnest</span><span class="p">(</span><span class="n">pg_blocking_pids</span><span class="p">(</span><span class="n">blocked_activity</span><span class="p">.</span><span class="n">pid</span><span class="p">))</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">blocking_pids</span><span class="p">(</span><span class="n">blocking_pid</span><span class="p">)</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="k">JOIN</span><span class="w"> </span><span class="n">pg_stat_activity</span><span class="w"> </span><span class="n">blocking_activity</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">blocking_activity</span><span class="p">.</span><span class="n">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blocking_pids</span><span class="p">.</span><span class="n">blocking_pid</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">WHERE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="n">blocked_activity</span><span class="p">.</span><span class="k">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;idle&#39;</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">blocking_xact_duration</span><span class="w"> </span><span class="k">DESC</span><span class="p">;</span>
+</span></code></pre></div>
+<hr />
+<h2 id="3-phan-tich-nguyen-nhan-goc-re-root-cause-analysis-rca">3. Phân Tích Nguyên Nhân Gốc Rễ (Root Cause Analysis - RCA)<a class="headerlink" href="#3-phan-tich-nguyen-nhan-goc-re-root-cause-analysis-rca" title="Permanent link">&para;</a></h2>
+<h3 id="co-che-hang-oi-khoa-lock-queue-fifo-starvation">Cơ chế hàng đợi khóa (Lock Queue FIFO Starvation)<a class="headerlink" href="#co-che-hang-oi-khoa-lock-queue-fifo-starvation" title="Permanent link">&para;</a></h3>
+<p>PostgreSQL quản lý khóa theo cơ chế hàng đợi FIFO (First-In, First-Out). Đây là nguyên nhân khiến một lệnh DDL tưởng chừng đơn giản có thể đánh sập cả hệ thống:</p>
+<pre class="mermaid"><code>graph TD
+    A["1. Long Running SELECT&lt;br/&gt;(Giữ AccessShare Lock)"] --&gt; Queue["Hàng đợi Lock Queue của PostgreSQL"]
+    B["2. ALTER TABLE orders ADD COLUMN ...&lt;br/&gt;(Yêu cầu AccessExclusive Lock)"] --&gt; Queue
+    C["3. Hàng trăm Incoming SELECT &amp; INSERT mới&lt;br/&gt;(Yêu cầu AccessShare / RowExclusive)"] --&gt; Queue
+
+    Queue --&gt; Trap["HẬU QUẢ: Lệnh ALTER TABLE phải chờ SELECT 1 kết thúc.&lt;br/&gt;Nhưng tất cả SELECT &amp; INSERT 3 lại phải xếp hàng SAU lệnh ALTER TABLE.&lt;br/&gt;-&gt; TẤT CẢ REQUESTS BỊ CHẶN HÀNG LOẠT!"]</code></pre>
+<h3 id="tai-sao-lai-xay-ra">Tại sao lại xảy ra?<a class="headerlink" href="#tai-sao-lai-xay-ra" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Lệnh số 1 (SELECT dài)</strong>: Đang chạy một báo cáo thống kê mất 30 giây, giữ khóa <code>AccessShareLock</code>.</li>
+<li><strong>Lệnh số 2 (DDL - <code>ALTER TABLE</code>)</strong>: Kỹ sư chạy thêm cột hoặc đổi kiểu dữ liệu. Lệnh này yêu cầu <code>AccessExclusiveLock</code>. Do xung đột với <code>AccessShareLock</code>, lệnh số 2 bị đưa vào hàng đợi chờ.</li>
+<li><strong>Lệnh số 3 (Các request của user)</strong>: Hàng trăm query <code>SELECT</code> và <code>INSERT</code> mới tiếp tục đổ về. Mặc dù <code>SELECT</code> không xung đột với <code>SELECT</code>, nhưng theo luật FIFO của PostgreSQL, <strong>không một query nào được phép vượt mặt lệnh số 2 đang chờ <code>AccessExclusiveLock</code></strong>!</li>
+<li><strong>Kết quả</strong>: Toàn bộ ứng dụng bị tê liệt cho tới khi lệnh số 1 kết thúc.</li>
+</ol>
+<hr />
+<h2 id="4-bien-phap-khac-phuc-tuc-thoi-immediate-mitigation">4. Biện Pháp Khắc Phục Tức Thời (Immediate Mitigation)<a class="headerlink" href="#4-bien-phap-khac-phuc-tuc-thoi-immediate-mitigation" title="Permanent link">&para;</a></h2>
+<p>Để cứu vãn hệ thống trong lúc sự cố đang diễn ra:</p>
+<h3 id="lua-chon-1-huy-cau-lenh-gay-nghen-graceful-cancel">Lựa chọn 1: Hủy câu lệnh gây nghẽn (Graceful Cancel)<a class="headerlink" href="#lua-chon-1-huy-cau-lenh-gay-nghen-graceful-cancel" title="Permanent link">&para;</a></h3>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1">-- Hủy query hiện tại nhưng giữ lại connection</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">pg_cancel_backend</span><span class="p">(</span><span class="mi">12345</span><span class="p">);</span><span class="w"> </span><span class="c1">-- Thay 12345 bằng blocking_pid tìm được ở Mục 2</span>
+</span></code></pre></div>
+<h3 id="lua-chon-2-ngat-ket-noi-tien-trinh-ngay-lap-tuc-force-terminate">Lựa chọn 2: Ngắt kết nối tiến trình ngay lập tức (Force Terminate)<a class="headerlink" href="#lua-chon-2-ngat-ket-noi-tien-trinh-ngay-lap-tuc-force-terminate" title="Permanent link">&para;</a></h3>
+<p>Nếu <code>pg_cancel_backend</code> không có tác dụng (ví dụ tiến trình đang bị kẹt I/O hoặc deadlock):
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">-- Buộc đóng kết nối TCP của tiến trình gây nghẽn</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">pg_terminate_backend</span><span class="p">(</span><span class="mi">12345</span><span class="p">);</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="5-giai-phap-phong-ngua-triet-e-long-term-prevention">5. Giải Pháp Phòng Ngừa Triệt Để (Long-Term Prevention)<a class="headerlink" href="#5-giai-phap-phong-ngua-triet-e-long-term-prevention" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>[!IMPORTANT]
+<strong>Production Safety Checklist khi chạy DDL hoặc Migration</strong>:</p>
+</blockquote>
+<h3 id="1-luon-thiet-lap-lock_timeout-truoc-khi-chay-ddl">1. Luôn thiết lập <code>lock_timeout</code> trước khi chạy DDL<a class="headerlink" href="#1-luon-thiet-lap-lock_timeout-truoc-khi-chay-ddl" title="Permanent link">&para;</a></h3>
+<p>Tuyệt đối không để một câu lệnh DDL chờ đợi vô hạn định:
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">-- Chỉ cho phép lệnh ALTER TABLE chờ lấy lock tối đa 2 giây. </span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1">-- Nếu quá 2 giây, PostgreSQL tự hủy lệnh DDL thay vì làm nghẽn toàn bộ hệ thống!</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="k">SET</span><span class="w"> </span><span class="n">lock_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;2s&#39;</span><span class="p">;</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="n">is_priority</span><span class="w"> </span><span class="nb">BOOLEAN</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">FALSE</span><span class="p">;</span>
+</span></code></pre></div></p>
+<h3 id="2-thiet-lap-gioi-han-giao-dich-nhan-roi-idle_in_transaction_session_timeout">2. Thiết lập giới hạn giao dịch nhàn rỗi (<code>idle_in_transaction_session_timeout</code>)<a class="headerlink" href="#2-thiet-lap-gioi-han-giao-dich-nhan-roi-idle_in_transaction_session_timeout" title="Permanent link">&para;</a></h3>
+<p>Một trong những nguyên nhân hàng đầu gây lock contention là lập trình viên mở transaction bằng <code>BEGIN</code> nhưng quên <code>COMMIT</code>/<code>ROLLBACK</code>:
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1">-- Cấu hình trong postgresql.conf hoặc cho từng user:</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1">-- Tự động hủy connection nếu nhàn rỗi trong transaction quá 30 giây</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="k">ALTER</span><span class="w"> </span><span class="k">SYSTEM</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">idle_in_transaction_session_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;30s&#39;</span><span class="p">;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="k">SELECT</span><span class="w"> </span><span class="n">pg_reload_conf</span><span class="p">();</span>
+</span></code></pre></div></p>
+<h3 id="3-tao-index-voi-tu-khoa-concurrently">3. Tạo Index với từ khóa <code>CONCURRENTLY</code><a class="headerlink" href="#3-tao-index-voi-tu-khoa-concurrently" title="Permanent link">&para;</a></h3>
+<p>Lệnh <code>CREATE INDEX</code> thông thường yêu cầu <code>ShareLock</code>, chặn toàn bộ thao tác ghi (<code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>).<br />
+<strong>Luôn sử dụng <code>CONCURRENTLY</code> trong production</strong>:
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1">-- Không chặn ghi vào bảng trong suốt quá trình build index</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="n">CONCURRENTLY</span><span class="w"> </span><span class="n">idx_orders_customer_vip</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="p">(</span><span class="n">customer_id</span><span class="p">)</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">is_priority</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">true</span><span class="p">;</span>
+</span></code></pre></div></p>
+<hr />
+<h2 id="6-lien-ket-cheo-tai-lieu-lien-quan">6. Liên Kết Chéo &amp; Tài Liệu Liên Quan<a class="headerlink" href="#6-lien-ket-cheo-tai-lieu-lien-quan" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Phân tích chi phí truy vấn</strong>: <a href="../explain-analyze/">PostgreSQL EXPLAIN ANALYZE: Giải mã Execution Plan</a></li>
+<li><strong>Kiến trúc tổng quan</strong>: <a href="../">PostgreSQL Knowledge Hub</a></li>
+<li><strong>Hands-on Lab kiểm chứng</strong>: <a href="https://github.com/vinh-nt/developer-knowledge-base/tree/main/labs/postgresql/explain-analyze"><code>labs/postgresql/explain-analyze/</code></a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.indexes", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2297 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Personal Technical Knowledge Base for PostgreSQL, Java, Spring Boot, AWS, and System Design.">
+      
+      
+        <meta name="author" content="Senior Software Architect & AI Agent Engineer">
+      
+      
+        <link rel="canonical" href="https://github.com/vinh-nt/developer-knowledge-base/postgresql/explain-analyze/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../troubleshooting-locks/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Deep Dive: EXPLAIN ANALYZE - Developer Knowledge Base</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#postgresql-explain-analyze-giai-ma-execution-plan-tu-ban-chat" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Developer Knowledge Base" class="md-header__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Developer Knowledge Base
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Deep Dive: EXPLAIN ANALYZE
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Chuyển sang Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Chuyển sang Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Trang chủ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  PostgreSQL
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../java/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Java
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../spring-boot/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Spring Boot
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../aws/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  AWS
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../system-design/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  System Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../standards/agents-governance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Engineering Standards
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Developer Knowledge Base" class="md-nav__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Developer Knowledge Base
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trang chủ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PostgreSQL
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: EXPLAIN ANALYZE
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: EXPLAIN ANALYZE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ban-chat-cua-explain-vs-explain-analyze" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Bản Chất Của EXPLAIN vs. EXPLAIN ANALYZE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Bản Chất Của EXPLAIN vs. EXPLAIN ANALYZE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#su-khac-biet-cot-tu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sự khác biệt cốt tử
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-cu-phap-khuyen-nghi-cho-senior-engineer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Cú Pháp Khuyến Nghị Cho Senior Engineer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Cú Pháp Khuyến Nghị Cho Senior Engineer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#y-nghia-cua-cac-tham-so" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ý nghĩa của các tham số
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-mo-xe-cau-truc-mot-node-trong-execution-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Mổ Xẻ Cấu Trúc Một Node Trong Execution Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Mổ Xẻ Cấu Trúc Một Node Trong Execution Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-phan-giai-cost-estimation-cost12451250-rows20-width85" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. Phân giải Cost Estimation: (cost=12.45..12.50 rows=20 width=85)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1. Phân giải Cost Estimation: (cost=12.45..12.50 rows=20 width=85)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cong-thuc-tinh-cost-co-ban-trong-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Công thức tính Cost cơ bản trong PostgreSQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-phan-giai-runtime-metrics-actual-time00820086-rows20-loops1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. Phân giải Runtime Metrics: (actual time=0.082..0.086 rows=20 loops=1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cac-chien-luoc-quet-du-lieu-scan-strategies-under-the-hood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Các Chiến Lược Quét Dữ Liệu (Scan Strategies Under The Hood)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Các Chiến Lược Quét Dữ Liệu (Scan Strategies Under The Hood)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sequential-scan-seq-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Sequential Scan (Seq Scan)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-index-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Index Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-index-only-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Index Only Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-bitmap-index-scan-ket-hop-bitmap-heap-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Bitmap Index Scan kết hợp Bitmap Heap Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-giai-ma-thong-ke-bo-em-buffer-cache-breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Giải Mã Thống Kê Bộ Đệm (Buffer Cache Breakdown)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cam-bay-thuc-te-trong-production-production-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Cạm Bẫy Thực Tế Trong Production (Production Pitfalls)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Cạm Bẫy Thực Tế Trong Production (Production Pitfalls)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cam-bay-1-jit-just-in-time-compilation-overhead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cạm bẫy 1: JIT (Just-In-Time) Compilation Overhead
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cam-bay-2-lech-pha-giua-estimated-rows-va-actual-rows-estimation-skew" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cạm bẫy 2: Lệch pha giữa Estimated Rows và Actual Rows (Estimation Skew)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-moi-truong-thi-nghiem-oc-lap-reproducible-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Môi Trường Thí Nghiệm Độc Lập (Reproducible Lab)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Môi Trường Thí Nghiệm Độc Lập (Reproducible Lab)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#huong-dan-chay-nhanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hướng dẫn chạy nhanh:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-bai-viet-lien-quan-related-knowledge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Bài Viết Liên Quan (Related Knowledge)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting-locks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting: Lock Contention
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../investigations/inv-001-jsonb-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation: JSONB GIN Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../java/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Java
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../spring-boot/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spring Boot
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Spring Boot
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../aws/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../system-design/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Design
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    System Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Standards
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engineering Standards
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/agents-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance & Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/unified-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quy Trình Quản Trị Hợp Nhất
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/investigation-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quản Trị Điều Tra (Investigations)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../standards/theme-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kiến trúc & Theme Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_5" id="__nav_7_5_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Templates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Templates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/knowledge-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/book-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Book Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-To Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/code-recipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Recipe Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/hands-on-lab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hands-on Lab Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/investigation-raw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raw Investigation Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../starter-templates/investigation-case/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation Case Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ban-chat-cua-explain-vs-explain-analyze" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Bản Chất Của EXPLAIN vs. EXPLAIN ANALYZE
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="1. Bản Chất Của EXPLAIN vs. EXPLAIN ANALYZE">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#su-khac-biet-cot-tu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sự khác biệt cốt tử
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-cu-phap-khuyen-nghi-cho-senior-engineer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Cú Pháp Khuyến Nghị Cho Senior Engineer
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Cú Pháp Khuyến Nghị Cho Senior Engineer">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#y-nghia-cua-cac-tham-so" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ý nghĩa của các tham số
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-mo-xe-cau-truc-mot-node-trong-execution-plan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Mổ Xẻ Cấu Trúc Một Node Trong Execution Plan
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Mổ Xẻ Cấu Trúc Một Node Trong Execution Plan">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-phan-giai-cost-estimation-cost12451250-rows20-width85" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. Phân giải Cost Estimation: (cost=12.45..12.50 rows=20 width=85)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3.1. Phân giải Cost Estimation: (cost=12.45..12.50 rows=20 width=85)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cong-thuc-tinh-cost-co-ban-trong-postgresql" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Công thức tính Cost cơ bản trong PostgreSQL
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-phan-giai-runtime-metrics-actual-time00820086-rows20-loops1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. Phân giải Runtime Metrics: (actual time=0.082..0.086 rows=20 loops=1)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cac-chien-luoc-quet-du-lieu-scan-strategies-under-the-hood" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Các Chiến Lược Quét Dữ Liệu (Scan Strategies Under The Hood)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Các Chiến Lược Quét Dữ Liệu (Scan Strategies Under The Hood)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-sequential-scan-seq-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Sequential Scan (Seq Scan)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-index-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Index Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-index-only-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Index Only Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-bitmap-index-scan-ket-hop-bitmap-heap-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Bitmap Index Scan kết hợp Bitmap Heap Scan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-giai-ma-thong-ke-bo-em-buffer-cache-breakdown" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Giải Mã Thống Kê Bộ Đệm (Buffer Cache Breakdown)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cam-bay-thuc-te-trong-production-production-pitfalls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Cạm Bẫy Thực Tế Trong Production (Production Pitfalls)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Cạm Bẫy Thực Tế Trong Production (Production Pitfalls)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cam-bay-1-jit-just-in-time-compilation-overhead" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cạm bẫy 1: JIT (Just-In-Time) Compilation Overhead
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cam-bay-2-lech-pha-giua-estimated-rows-va-actual-rows-estimation-skew" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cạm bẫy 2: Lệch pha giữa Estimated Rows và Actual Rows (Estimation Skew)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-moi-truong-thi-nghiem-oc-lap-reproducible-lab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Môi Trường Thí Nghiệm Độc Lập (Reproducible Lab)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Môi Trường Thí Nghiệm Độc Lập (Reproducible Lab)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#huong-dan-chay-nhanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Hướng dẫn chạy nhanh:
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-bai-viet-lien-quan-related-knowledge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Bài Viết Liên Quan (Related Knowledge)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="postgresql-explain-analyze-giai-ma-execution-plan-tu-ban-chat">PostgreSQL EXPLAIN ANALYZE: Giải Mã Execution Plan Từ Bản Chất<a class="headerlink" href="#postgresql-explain-analyze-giai-ma-execution-plan-tu-ban-chat" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Phân loại</strong>: PostgreSQL Internals &amp; Performance Tuning<br />
+<strong>Phiên bản áp dụng</strong>: PostgreSQL 14, 15, 16+<br />
+<strong>Nguồn tài liệu chính thức</strong>:<br />
+- <a href="https://www.postgresql.org/docs/current/using-explain.html">PostgreSQL Documentation: Using EXPLAIN</a><br />
+- <a href="https://www.postgresql.org/docs/current/sql-explain.html">PostgreSQL Documentation: EXPLAIN SQL Command</a><br />
+- <a href="https://www.postgresql.org/docs/current/runtime-config-query.html#RUNTIME-CONFIG-QUERY-CONSTANTS">PostgreSQL Documentation: Planner Cost Constants</a><br />
+<strong>Mã nguồn thực nghiệm (Hands-on Lab)</strong>: <a href="https://github.com/vinh-nt/developer-knowledge-base/tree/main/labs/postgresql/explain-analyze"><code>labs/postgresql/explain-analyze/</code></a>  </p>
+</blockquote>
+<hr />
+<h2 id="1-ban-chat-cua-explain-vs-explain-analyze">1. Bản Chất Của EXPLAIN vs. EXPLAIN ANALYZE<a class="headerlink" href="#1-ban-chat-cua-explain-vs-explain-analyze" title="Permanent link">&para;</a></h2>
+<p>Trong quy trình xử lý câu truy vấn của PostgreSQL, sau khi đi qua <strong>Parser</strong> và <strong>Rewriter</strong>, câu lệnh SQL được chuyển đến <strong>Query Planner (Optimizer)</strong>. Planner sẽ đánh giá hàng loạt phương án thực thi (Execution Plans) và chọn ra phương án có tổng chi phí tính toán (Estimated Cost) thấp nhất.</p>
+<pre class="mermaid"><code>graph TD
+    SQL["SQL Query"] --&gt; Parser["1. Parser &amp; Rewriter"]
+    Parser --&gt; Planner["2. Cost-Based Planner"]
+    Planner --&gt; CostEval["Ước tính Cost dựa trên pg_statistic"]
+    CostEval --&gt; ExecPlan["Execution Plan Tree"]
+
+    subgraph Plan_Analysis["Phân tích Kế hoạch"]
+        ExecPlan --&gt; EXPLAIN["EXPLAIN (Chỉ đọc ước lượng Planner, KHÔNG chạy thật)"]
+        ExecPlan --&gt; EXPLAIN_ANALYZE["EXPLAIN ANALYZE (THỰC THI THẬT + Đo đạc Runtime Metrics)"]
+    end</code></pre>
+<h3 id="su-khac-biet-cot-tu">Sự khác biệt cốt tử<a class="headerlink" href="#su-khac-biet-cot-tu" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>EXPLAIN</code></strong>: Chỉ hiển thị kế hoạch dự kiến của Optimizer dựa trên bảng thống kê dữ liệu (<code>pg_statistic</code>). Câu truy vấn <strong>KHÔNG</strong> được thực thi.</li>
+<li><strong><code>EXPLAIN ANALYZE</code></strong>: Optimizer lập kế hoạch, sau đó <strong>Execution Engine THỰC SỰ CHẠY câu truy vấn đó</strong>, đếm số dòng thực tế, đo thời gian CPU/I/O, và ghi nhận dung lượng bộ đệm (Buffers) sử dụng.</li>
+</ul>
+<blockquote>
+<p>[!CAUTION]
+<strong>Cạm bẫy phá hủy dữ liệu (Production Hazard)</strong>:<br />
+Vì <code>EXPLAIN ANALYZE</code> thực sự chạy câu lệnh, nếu bạn thực hiện trên câu lệnh <code>INSERT</code>, <code>UPDATE</code>, hoặc <code>DELETE</code>, dữ liệu trong database <strong>sẽ bị thay đổi thật</strong>!<br />
+Để kiểm tra các câu lệnh ghi dữ liệu an toàn, <strong>luôn bọc trong một Transaction và ROLLBACK</strong>:
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">BEGIN</span><span class="p">;</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="k">EXPLAIN</span><span class="w"> </span><span class="k">ANALYZE</span><span class="w"> </span><span class="k">DELETE</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span><span class="k">WHERE</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;CANCELLED&#39;</span><span class="p">;</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">ROLLBACK</span><span class="p">;</span><span class="w"> </span><span class="c1">-- Hủy bỏ toàn bộ thay đổi, bảo toàn dữ liệu</span>
+</span></code></pre></div></p>
+</blockquote>
+<hr />
+<h2 id="2-cu-phap-khuyen-nghi-cho-senior-engineer">2. Cú Pháp Khuyến Nghị Cho Senior Engineer<a class="headerlink" href="#2-cu-phap-khuyen-nghi-cho-senior-engineer" title="Permanent link">&para;</a></h2>
+<p>Để có đầy đủ thông tin nhất nhằm chẩn đoán nghẽn cổ chai (bottlenecks), hãy luôn sử dụng tổ hợp cờ (flags) sau:</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">EXPLAIN</span><span class="w"> </span><span class="p">(</span><span class="k">ANALYZE</span><span class="p">,</span><span class="w"> </span><span class="n">BUFFERS</span><span class="p">,</span><span class="w"> </span><span class="n">TIMING</span><span class="p">,</span><span class="w"> </span><span class="n">COSTS</span><span class="p">,</span><span class="w"> </span><span class="k">VERBOSE</span><span class="p">,</span><span class="w"> </span><span class="n">SUMMARY</span><span class="p">)</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="w"> </span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">WHERE</span><span class="w"> </span><span class="n">customer_id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4289</span><span class="w"> </span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="k">AND</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="s1">&#39;2026-01-01&#39;</span><span class="w"> </span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="n">total_amount</span><span class="w"> </span><span class="k">DESC</span><span class="w"> </span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">LIMIT</span><span class="w"> </span><span class="mi">20</span><span class="p">;</span>
+</span></code></pre></div>
+<h3 id="y-nghia-cua-cac-tham-so">Ý nghĩa của các tham số<a class="headerlink" href="#y-nghia-cua-cac-tham-so" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>ANALYZE</code></strong> <em>(boolean)</em>: Kích hoạt thực thi thật để thu thập <code>actual time</code> và <code>actual rows</code>.</li>
+<li><strong><code>BUFFERS</code></strong> <em>(boolean)</em>: Hiển thị thống kê sử dụng bộ đệm (Shared Buffers, Local Buffers, Temp Buffers). Đây là chỉ số quan trọng nhất để đánh giá I/O.</li>
+<li><strong><code>TIMING</code></strong> <em>(boolean, mặc định on)</em>: Đo lường thời gian xuất hiện dòng đầu tiên (startup time) và hoàn thành node (total time).</li>
+<li><strong><code>VERBOSE</code></strong> <em>(boolean)</em>: Hiển thị thêm danh sách các cột (output columns), schema name và alias.</li>
+<li><strong><code>SUMMARY</code></strong> <em>(boolean)</em>: Tổng hợp thời gian lập kế hoạch (<code>Planning Time</code>) và thời gian chạy (<code>Execution Time</code>).</li>
+</ul>
+<hr />
+<h2 id="3-mo-xe-cau-truc-mot-node-trong-execution-plan">3. Mổ Xẻ Cấu Trúc Một Node Trong Execution Plan<a class="headerlink" href="#3-mo-xe-cau-truc-mot-node-trong-execution-plan" title="Permanent link">&para;</a></h2>
+<p>Xét một kết quả kế hoạch thực thi điển hình:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>Limit  (cost=12.45..12.50 rows=20 width=85) (actual time=0.082..0.086 rows=20 loops=1)
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>  Buffers: shared hit=8
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>  -&gt;  Sort  (cost=12.45..12.48 rows=14 width=85) (actual time=0.081..0.083 rows=20 loops=1)
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        Sort Key: total_amount DESC
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        Sort Method: top-N heapsort  Memory: 27kB
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        Buffers: shared hit=8
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        -&gt;  Index Scan using idx_orders_customer_id on orders  (cost=0.42..12.18 rows=14 width=85) (actual time=0.024..0.045 rows=25 loops=1)
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>              Index Cond: (customer_id = 4289)
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>              Filter: (created_at &gt;= &#39;2026-01-01 00:00:00&#39;::timestamp)
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>              Rows Removed by Filter: 5
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>              Buffers: shared hit=8
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>Planning Time: 0.185 ms
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>Execution Time: 0.121 ms
+</span></code></pre></div>
+<h3 id="31-phan-giai-cost-estimation-cost12451250-rows20-width85">3.1. Phân giải Cost Estimation: <code>(cost=12.45..12.50 rows=20 width=85)</code><a class="headerlink" href="#31-phan-giai-cost-estimation-cost12451250-rows20-width85" title="Permanent link">&para;</a></h3>
+<p>Đây là ước tính toán học từ Planner:
+- <strong><code>12.45</code> (Startup Cost)</strong>: Chi phí ước lượng để node sẵn sàng xuất ra dòng đầu tiên. Đối với node <code>Sort</code>, startup cost rất cao vì phải nạp và sắp xếp toàn bộ tập dữ liệu trước khi trả về dòng đầu tiên. Đối với <code>Index Scan</code>, startup cost thường gần bằng <code>0.00</code> hoặc <code>0.42</code> (chỉ cần duyệt từ root xuống leaf node).
+- <strong><code>12.50</code> (Total Cost)</strong>: Chi phí tích lũy ước tính để node xử lý xong tất cả các dòng dữ liệu.
+- <strong><code>rows=20</code></strong>: Số lượng dòng dự kiến node sẽ trả về.
+- <strong><code>width=85</code></strong>: Kích thước trung bình ước tính của mỗi dòng (tính bằng bytes).</p>
+<h4 id="cong-thuc-tinh-cost-co-ban-trong-postgresql">Công thức tính Cost cơ bản trong PostgreSQL<a class="headerlink" href="#cong-thuc-tinh-cost-co-ban-trong-postgresql" title="Permanent link">&para;</a></h4>
+<p>Chi phí không tính bằng giây hay mili-giây, mà tính bằng <strong>đơn vị cost tương đối (arbitrary cost units)</strong> chuẩn hóa theo:
+- <code>seq_page_cost = 1.0</code> (Chi phí đọc 1 page tuần tự từ đĩa).
+- <code>random_page_cost = 4.0</code> (Chi phí đọc 1 page ngẫu nhiên từ đĩa trên HDD truyền thống, với NVMe SSD nên cấu hình xuống <code>1.1</code>).
+- <code>cpu_tuple_cost = 0.01</code> (Chi phí CPU xử lý 1 dòng dữ liệu).
+- <code>cpu_operator_cost = 0.0025</code> (Chi phí CPU tính toán 1 biểu thức điều kiện WHERE).</p>
+<p>$$\text{Estimated Total Cost} = (\text{Pages} \times \text{page_cost}) + (\text{Tuples} \times \text{cpu_tuple_cost}) + (\text{Filters} \times \text{cpu_operator_cost})$$</p>
+<h3 id="32-phan-giai-runtime-metrics-actual-time00820086-rows20-loops1">3.2. Phân giải Runtime Metrics: <code>(actual time=0.082..0.086 rows=20 loops=1)</code><a class="headerlink" href="#32-phan-giai-runtime-metrics-actual-time00820086-rows20-loops1" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong><code>0.082</code> (Actual Startup Time)</strong>: Thời gian thực tế (mili-giây) từ khi bắt đầu cho đến khi node sẵn sàng xuất dòng đầu tiên.</li>
+<li><strong><code>0.086</code> (Actual Total Time)</strong>: Thời gian thực tế (mili-giây) để node hoàn thành việc xuất toàn bộ dữ liệu.</li>
+<li><strong><code>rows=20</code></strong>: Số dòng thực tế được trả về trong 1 vòng lặp (loop).</li>
+<li><strong><code>loops=1</code></strong>: Số lần node này được thực thi lại.</li>
+</ul>
+<blockquote>
+<p>[!IMPORTANT]
+<strong>Quy tắc Loops</strong>:<br />
+Nếu <code>loops &gt; 1</code> (thường gặp trong <code>Nested Loop Join</code>), các chỉ số <code>actual time</code> và <code>rows</code> hiển thị là <strong>giá trị trung bình cho MỖI loop</strong>.<br />
+<strong>Tổng thời gian thực tế của node</strong> = $\text{actual total time} \times \text{loops}$.<br />
+<strong>Tổng số dòng thực tế được quét</strong> = $\text{actual rows} \times \text{loops}$.</p>
+</blockquote>
+<hr />
+<h2 id="4-cac-chien-luoc-quet-du-lieu-scan-strategies-under-the-hood">4. Các Chiến Lược Quét Dữ Liệu (Scan Strategies Under The Hood)<a class="headerlink" href="#4-cac-chien-luoc-quet-du-lieu-scan-strategies-under-the-hood" title="Permanent link">&para;</a></h2>
+<p>PostgreSQL sử dụng 4 cơ chế quét dữ liệu chính:</p>
+<pre class="mermaid"><code>graph LR
+    subgraph Data_Access["Chiến lược truy cập dữ liệu"]
+        Seq["Sequential Scan (Seq Scan)&lt;br/&gt;Đọc tuần tự toàn bộ Block"]
+        Idx["Index Scan&lt;br/&gt;Duyệt B-Tree + Đọc Block ngẫu nhiên"]
+        IdxOnly["Index Only Scan&lt;br/&gt;Chỉ đọc B-Tree (Nhờ Visibility Map)"]
+        Bitmap["Bitmap Scan&lt;br/&gt;Bitmap Index Scan -&gt; Bitmap Heap Scan"]
+    end</code></pre>
+<h3 id="1-sequential-scan-seq-scan">1. Sequential Scan (<code>Seq Scan</code>)<a class="headerlink" href="#1-sequential-scan-seq-scan" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Cơ chế</strong>: Đọc tuần tự tất cả các data blocks (heap pages) của bảng từ đầu đến cuối.</li>
+<li><strong>Khi nào chọn</strong>:</li>
+<li>Bảng nhỏ (vài chục đến vài trăm pages): Chi phí đọc tuần tự nhanh hơn rất nhiều so với duyệt cây B-Tree.</li>
+<li>Câu truy vấn lấy tỷ lệ dòng lớn (&gt; 10-20% tổng số dòng trong bảng). Lúc này, <code>random_page_cost</code> của Index Scan sẽ đắt hơn nhiều so với việc scan hàng loạt page liên tục.</li>
+</ul>
+<h3 id="2-index-scan">2. Index Scan<a class="headerlink" href="#2-index-scan" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Cơ chế</strong>: Duyệt cây B-Tree từ Root node -&gt; Internal nodes -&gt; Leaf nodes để tìm con trỏ tuple (<code>ItemPointer / TID</code>: gồm Block Number và Offset). Sau đó, lập tức nhảy vào Heap page trên đĩa để lấy toàn bộ dữ liệu của tuple đó.</li>
+<li><strong>Đánh đổi</strong>: Tốn chi phí Random I/O cho mỗi dòng tìm thấy. Nếu câu truy vấn cần lấy 50.000 dòng, việc nhảy ngẫu nhiên vào 50.000 vị trí khác nhau trên ổ đĩa sẽ gây thắt cổ chai I/O nghiêm trọng.</li>
+</ul>
+<h3 id="3-index-only-scan">3. Index Only Scan<a class="headerlink" href="#3-index-only-scan" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Cơ chế</strong>: Tất cả các cột được yêu cầu trong câu <code>SELECT</code> đều đã nằm sẵn trong cấu trúc của Index (ví dụ composite index hoặc index có mệnh đề <code>INCLUDE</code>), VÀ các trang dữ liệu tương ứng được đánh dấu là "sạch" trong <strong>Visibility Map (VM)</strong>.</li>
+<li><strong>Lợi ích</strong>: Không cần chạm vào Heap pages. Đây là chiến lược quét nhanh nhất trong cơ sở dữ liệu quan hệ.</li>
+</ul>
+<h3 id="4-bitmap-index-scan-ket-hop-bitmap-heap-scan">4. Bitmap Index Scan kết hợp Bitmap Heap Scan<a class="headerlink" href="#4-bitmap-index-scan-ket-hop-bitmap-heap-scan" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Cơ chế 2 bước</strong>:</li>
+<li><code>Bitmap Index Scan</code>: Duyệt index và dựng một mảng bit trong bộ nhớ (TID Bitmap). Mỗi bit đại diện cho một trang dữ liệu chứa dòng thỏa mãn điều kiện.</li>
+<li><code>Bitmap Heap Scan</code>: Sắp xếp các địa chỉ trang theo thứ tự vật lý liên tục trên đĩa, sau đó đọc các trang heap một lần theo thứ tự tuần tự đó.</li>
+<li><strong>Giải quyết bài toán</strong>: Chuyển đổi các thao tác Random I/O rời rạc của Index Scan thành Sequential I/O gom cụm, cực kỳ hiệu quả khi cần lấy từ 1% đến 10% dữ liệu của bảng lớn.</li>
+</ul>
+<hr />
+<h2 id="5-giai-ma-thong-ke-bo-em-buffer-cache-breakdown">5. Giải Mã Thống Kê Bộ Đệm (Buffer Cache Breakdown)<a class="headerlink" href="#5-giai-ma-thong-ke-bo-em-buffer-cache-breakdown" title="Permanent link">&para;</a></h2>
+<p>Khi kích hoạt cờ <code>BUFFERS</code>, PostgreSQL xuất ra chi tiết về hành vi đọc ghi bộ nhớ:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>Buffers: shared hit=42 read=15 dirtied=2 written=0, temp read=120 written=120
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Thuộc tính bộ đệm</th>
+<th style="text-align: left;">Ý nghĩa kỹ thuật</th>
+<th style="text-align: left;">Phân tích hiệu năng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong><code>shared hit</code></strong></td>
+<td style="text-align: left;">Số page 8KB tìm thấy sẵn trong <code>shared_buffers</code> của PostgreSQL.</td>
+<td style="text-align: left;"><strong>Tốt nhất</strong>: Dữ liệu nằm trong RAM, độ trễ truy xuất chỉ vài micro-giây.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>shared read</code></strong></td>
+<td style="text-align: left;">Số page phải đọc từ OS Page Cache hoặc ổ cứng vật lý.</td>
+<td style="text-align: left;"><strong>Có độ trễ</strong>: Nếu số này lớn liên tục, hệ thống đang thiếu RAM hoặc thiếu index phù hợp, dẫn tới Disk I/O bottleneck.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>shared dirtied</code></strong></td>
+<td style="text-align: left;">Số page bị sửa đổi dữ liệu trong RAM trong quá trình thực thi.</td>
+<td style="text-align: left;">Xuất hiện khi chạy câu lệnh DML hoặc khi câu lệnh SELECT kích hoạt hint bit cập nhật visibility.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>shared written</code></strong></td>
+<td style="text-align: left;">Số page bị đẩy từ shared_buffers xuống đĩa.</td>
+<td style="text-align: left;">Do checkpoint hoặc background writer xử lý khi bộ đệm đầy.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong><code>temp read / written</code></strong></td>
+<td style="text-align: left;">Số page tạm phải ghi ra đĩa do tràn bộ nhớ <code>work_mem</code>.</td>
+<td style="text-align: left;"><strong>Báo động đỏ</strong>: Node <code>Sort</code> hoặc <code>Hash Join</code> bị tràn RAM, phải dùng <code>external merge sort</code> trên đĩa. Cần tăng <code>work_mem</code>.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="6-cam-bay-thuc-te-trong-production-production-pitfalls">6. Cạm Bẫy Thực Tế Trong Production (Production Pitfalls)<a class="headerlink" href="#6-cam-bay-thuc-te-trong-production-production-pitfalls" title="Permanent link">&para;</a></h2>
+<h3 id="cam-bay-1-jit-just-in-time-compilation-overhead">Cạm bẫy 1: JIT (Just-In-Time) Compilation Overhead<a class="headerlink" href="#cam-bay-1-jit-just-in-time-compilation-overhead" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Hiện tượng</strong>: Trên PostgreSQL 12+, cơ chế JIT (LLVM) được bật mặc định. Khi tổng estimated cost vượt quá <code>jit_above_cost</code> (mặc định 100.000), PostgreSQL sẽ kích hoạt JIT compiler để dịch biểu thức truy vấn sang mã máy native code.</li>
+<li><strong>Vấn đề</strong>: Quá trình biên dịch JIT mất từ 20ms đến 100ms. Đối với các câu truy vấn OLTP chỉ cần chạy trong 2ms, JIT khiến câu lệnh chạy chậm hơn 50 lần!</li>
+<li><strong>Dấu hiệu nhận biết</strong>: Trong plan xuất hiện khối:
+  <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>JIT:
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  Functions: 12
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>  Options: Inlining true, Optimization true, Expressions true, Deforming true
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>  Timing: Generation 1.250 ms, Inlining 23.410 ms, Optimization 45.210 ms, Emission 18.230 ms, Total 88.100 ms
+</span></code></pre></div></li>
+<li><strong>Giải pháp</strong>: Đối với hệ thống OLTP hoặc transaction ngắn, hãy tắt JIT:
+  <div class="language-sql highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">SET</span><span class="w"> </span><span class="n">jit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">off</span><span class="p">;</span>
+</span></code></pre></div></li>
+</ul>
+<h3 id="cam-bay-2-lech-pha-giua-estimated-rows-va-actual-rows-estimation-skew">Cạm bẫy 2: Lệch pha giữa Estimated Rows và Actual Rows (Estimation Skew)<a class="headerlink" href="#cam-bay-2-lech-pha-giua-estimated-rows-va-actual-rows-estimation-skew" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Hiện tượng</strong>: Planner ước lượng <code>rows=1</code>, nhưng thực tế <code>actual rows=125.000</code>.</li>
+<li><strong>Hậu quả</strong>: Do nghĩ rằng chỉ có 1 dòng, Planner đã chọn <code>Nested Loop Join</code> (thích hợp với tập dữ liệu nhỏ). Khi gặp 125.000 dòng, phép toán phải loop 125.000 lần, khiến query bị treo hàng chục phút!</li>
+<li><strong>Nguyên nhân</strong>: Dữ liệu bị phân mảnh, cột có correlation cao giữa nhiều trường (ví dụ: <code>make = 'Audi'</code> và <code>model = 'A6'</code>), hoặc <code>ANALYZE</code> chưa được chạy sau khi nạp khối lượng lớn dữ liệu.</li>
+<li><strong>Giải pháp</strong>:</li>
+<li>Chạy <code>ANALYZE table_name;</code></li>
+<li>Tạo Extended Statistics (PostgreSQL 10+):
+    <div class="language-sql highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">STATISTICS</span><span class="w"> </span><span class="n">stat_orders_cust_date</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">customer_id</span><span class="p">,</span><span class="w"> </span><span class="n">created_at</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">ANALYZE</span><span class="w"> </span><span class="n">orders</span><span class="p">;</span>
+</span></code></pre></div></li>
+</ul>
+<hr />
+<h2 id="7-moi-truong-thi-nghiem-oc-lap-reproducible-lab">7. Môi Trường Thí Nghiệm Độc Lập (Reproducible Lab)<a class="headerlink" href="#7-moi-truong-thi-nghiem-oc-lap-reproducible-lab" title="Permanent link">&para;</a></h2>
+<p>Để trực tiếp chạy thực nghiệm trên 1.000.000 bản ghi và quan sát trực quan sự chuyển dịch từ <code>Seq Scan</code> sang <code>Index Scan</code> và <code>Bitmap Heap Scan</code>, vui lòng truy cập thư mục lab độc lập:</p>
+<p>👉 <strong>Source Code Lab</strong>: <a href="https://github.com/vinh-nt/developer-knowledge-base/tree/main/labs/postgresql/explain-analyze"><code>labs/postgresql/explain-analyze/</code></a></p>
+<h3 id="huong-dan-chay-nhanh">Hướng dẫn chạy nhanh:<a class="headerlink" href="#huong-dan-chay-nhanh" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">cd</span><span class="w"> </span>labs/postgresql/explain-analyze
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>knowledgedb<span class="w"> </span>-f<span class="w"> </span>/scripts/queries.sql
+</span></code></pre></div>
+<hr />
+<h2 id="8-bai-viet-lien-quan-related-knowledge">8. Bài Viết Liên Quan (Related Knowledge)<a class="headerlink" href="#8-bai-viet-lien-quan-related-knowledge" title="Permanent link">&para;</a></h2>
+<ul>
+<li>🛠️ <strong><a href="../troubleshooting-locks/">Troubleshooting: Chẩn đoán &amp; Xử lý Lock Contention / Blocking Queries</a></strong>: Xử lý sự cố tranh chấp khóa khi query bị block bởi DDL hoặc long-running transactions.</li>
+<li>📚 <strong><a href="../">PostgreSQL Knowledge Hub</a></strong>: Tổng quan kiến trúc PostgreSQL, B-Tree indexing, MVCC, và tối ưu hóa bộ nhớ.</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.indexes", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
