@@ -1,0 +1,128 @@
+site_name: Developer Knowledge Base
+site_description: Personal Technical Knowledge Base for PostgreSQL, Java, Spring Boot, AWS, and System Design.
+site_author: Senior Software Architect & AI Agent Engineer
+site_url: https://github.com/vinh-nt/developer-knowledge-base
+
+repo_name: vinh-nt/developer-knowledge-base
+repo_url: https://github.com/vinh-nt/developer-knowledge-base
+
+theme:
+  name: material
+  language: en
+  palette:
+    # Scheme toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/weather-night
+        name: Chuyển sang Dark mode
+
+    # Scheme toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: light blue
+      toggle:
+        icon: material/weather-sunny
+        name: Chuyển sang Light mode
+
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.tracking
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+
+extra:
+  status:
+    new: Mới cập nhật
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+
+nav:
+  - Trang chủ: index.md
+  - PostgreSQL:
+      - Tổng quan & Roadmap: postgresql/index.md
+      - Best Practices:
+          - Tổng quan: postgresql/best-practices/index.md
+          - "Tối ưu hóa Truy vấn & Chỉ mục JSONB": postgresql/best-practices/jsonb-query-optimization.md
+          - "PostgreSQL B-Tree Index Deduplication": postgresql/best-practices/postgresql-b-tree-index-deduplication.md
+      - "Deep Dive: EXPLAIN ANALYZE": postgresql/explain-analyze.md
+      - "Troubleshooting: Lock Contention": postgresql/troubleshooting-locks.md
+      - "Investigation: JSONB GIN Tuning": postgresql/investigations/inv-001-jsonb-tuning.md
+  - Java:
+      - Tổng quan & Roadmap: java/index.md
+      - Best Practices:
+          - Tổng quan: java/best-practices/index.md
+          - "Xử lý Ngoại lệ Chuẩn mực": java/best-practices/exception-handling.md
+  - Spring Boot:
+      - Tổng quan & Roadmap: spring-boot/index.md
+      - Best Practices:
+          - Tổng quan: spring-boot/best-practices/index.md
+          - "Cấu hình WebClient Kháng lỗi": spring-boot/best-practices/resilient-webclient.md
+      - How-to:
+          - "Cấu Hình Virtual Threads Cho Spring Boot 3.3": spring-boot/how-to/cau-hinh-virtual-threads-cho-spring-boot-33.md
+  - AWS:
+      - Tổng quan & Roadmap: aws/index.md
+      - Best Practices:
+          - Tổng quan: aws/best-practices/index.md
+          - "Export Aurora PostgreSQL sang S3": aws/best-practices/aurora-s3-export.md
+  - System Design:
+      - Tổng quan & Roadmap: system-design/index.md
+      - Best Practices:
+          - Tổng quan: system-design/best-practices/index.md
+          - "Thiết kế Idempotency & Phòng vệ Sự cố": system-design/best-practices/idempotency-and-resilience.md
+  - Engineering Standards:
+      - Agent Governance & Rules: standards/agents-governance.md
+      - Quy Trình Quản Trị Hợp Nhất: standards/unified-workflow.md
+      - Quản Trị Điều Tra (Investigations): standards/investigation-workflow.md
+      - Hướng Dẫn Nhập Ghi Chú TXT: standards/txt-import-guide.md
+      - Kiến trúc & Theme Evaluation: standards/theme-evaluation.md
+      - Templates:
+          - Knowledge Note Template: starter-templates/knowledge-note.md
+          - Book Note Template: starter-templates/book-note.md
+          - Troubleshooting Template: starter-templates/troubleshooting.md
+          - How-To Template: starter-templates/how-to.md
+          - Code Recipe Template: starter-templates/code-recipe.md
+          - Hands-on Lab Template: starter-templates/hands-on-lab.md
+          - Raw Investigation Template: starter-templates/investigation-raw.md
+          - Investigation Case Template: starter-templates/investigation-case.md
+          - Best Practice Template: starter-templates/best-practice.md
