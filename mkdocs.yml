@@ -85,6 +85,7 @@ nav:
           - Tổng quan: postgresql/best-practices/index.md
           - "Tối ưu hóa Truy vấn & Chỉ mục JSONB": postgresql/best-practices/jsonb-query-optimization.md
           - "PostgreSQL B-Tree Index Deduplication": postgresql/best-practices/postgresql-b-tree-index-deduplication.md
+          - "Export/Import Data": postgresql/best-practices/postgresql-export-import-data.md
       - "Deep Dive: EXPLAIN ANALYZE": postgresql/explain-analyze.md
       - "Troubleshooting: Lock Contention": postgresql/troubleshooting-locks.md
       - "Investigation: JSONB GIN Tuning": postgresql/investigations/inv-001-jsonb-tuning.md
