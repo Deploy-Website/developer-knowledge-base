@@ -17,6 +17,12 @@ Deploy github page: python -m mkdocs gh-deploy --force
 - [3. Cấu Trúc Repository](#3-cấu-trúc-repository)
 - [4. Cài Đặt & Chạy Môi Trường](#4-cài-đặt--chạy-môi-trường)
 - [5. Quy Trình Thêm Kiến Thức Mới](#5-quy-trình-thêm-kiến-thức-mới)
+  - [5.1. Lộ trình 1: Tiếp nhận nhanh qua Knowledge Inbox (Tự động hóa với AI Agent)](#51-lộ-trình-1-tiếp-nhận-nhanh-qua-knowledge-inbox-tự-động-hóa-với-ai-agent)
+  - [5.2. Lộ trình 2: Tự thêm bài viết Markdown (.md) tùy chỉnh (Manual Contributor Workflow)](#52-lộ-trình-2-tự-thêm-bài-viết-markdown-md-tùy-chỉnh-manual-contributor-workflow)
+    - [Bước 1: Khởi tạo file .md và cấu trúc bài viết chuẩn](#bước-1-khởi-tạo-file-md-và-cấu-trúc-bài-viết-chuẩn)
+    - [Bước 2: Liên kết bài viết vào Menu điều hướng (mkdocs.yml)](#bước-2-liên-kết-bài-viết-vào-menu-điều-hướng-mkdocsyml)
+    - [Bước 3: Tạo thêm Group / Phân mục Menu mới (Nested Navigation & Sections)](#bước-3-tạo-thêm-group--phân-mục-menu-mới-nested-navigation--sections)
+    - [Bước 4: Kiểm tra và Khắc phục lỗi (Verification & Troubleshooting)](#bước-4-kiểm-tra-và-khắc-phục-lỗi-verification--troubleshooting)
 - [6. Hướng Dẫn Kích Hoạt Antigravity Agent Skills](#6-hướng-dẫn-kích-hoạt-antigravity-agent-skills)
 - [7. Thực Thi Thí Nghiệm Hands-on Labs](#7-thực-thi-thí-nghiệm-hands-on-labs)
 - [8. Quy Chuẩn Kỹ Thuật (AGENTS.md)](#8-quy-chuẩn-kỹ-thuật-agentsmd)
@@ -157,28 +163,225 @@ _(Lệnh trả về mã thoát `0` và sinh thư mục `site/`)._
 
 ## 5. Quy Trình Thêm Kiến Thức Mới
 
-Hệ thống hỗ trợ 2 lộ trình ghi nhận tri thức linh hoạt:
+Hệ thống hỗ trợ 2 lộ trình ghi nhận tri thức linh hoạt tùy theo nhu cầu: sử dụng AI Agent tự động hóa hoặc tự biên soạn bài viết tùy chỉnh (custom) thủ công.
 
-### Lộ trình 1: Tiếp nhận nhanh qua Knowledge Inbox (Khuyến nghị cho công việc thực tế)
+---
 
-1. Tạo file ghi chú thô trong `inbox/` (ví dụ: `inbox/pg-timeout.md`) chứa log lỗi, câu query, hoặc ý tưởng thô.
-2. Yêu cầu AI Agent kích hoạt skill **`capture-knowledge`** để tự động kiểm tra trùng lặp, chọn template chuẩn hóa và phân loại vào `docs/` hoặc `labs/`.
+### 5.1. Lộ trình 1: Tiếp nhận nhanh qua Knowledge Inbox (Tự động hóa với AI Agent)
 
-### Lộ trình 2: Tự biên soạn bài bản qua Templates
+Dành cho trường hợp bạn có ghi chú thô, error logs, draft post-mortem hoặc trích xuất từ NotebookLM và muốn AI Agent xử lý tự động:
 
-1. **Chọn Template**: Mở thư mục `templates/` hoặc xem tại `docs/starter-templates/`:
-   - `best-practice.md`: Quy chuẩn sản xuất, giải pháp tái sử dụng theo domain (Best Practice).
-   - `knowledge-note-template.md`: Phân tích chuyên sâu cơ chế kiến trúc.
-   - `book-note-template.md`: Chắt lọc mô hình tư duy từ sách kinh điển.
-   - `troubleshooting-template.md`: Phân tích sự cố, Root Cause Analysis & Post-mortem.
-   - `how-to-template.md`: Hướng dẫn quy trình thao tác và cấu hình thực tế.
-   - `code-recipe-template.md`: Tập hợp các đoạn code hoặc truy vấn SQL tối ưu.
-   - `hands-on-lab-template.md`: Thí nghiệm đo lường hiệu năng và benchmark.
-2. **Soạn thảo**: Lưu file vào đúng thư mục tương ứng trong `docs/<topic>/<ten-bai>.md` hoặc `docs/<topic>/best-practices/<topic>.md`.
-   - Tuân thủ nguyên tắc: Giải thích bằng tiếng Việt, giữ nguyên thuật ngữ tiếng Anh.
-   - Đính kèm link tài liệu chính thức (`Official Documentation`).
-3. **Cập nhật Mục Lục**: Thêm đường dẫn bài viết vào phần `nav` trong tệp `mkdocs.yml`.
-4. **Xác nhận**: Chạy `python -m mkdocs build --strict` để kiểm tra toàn vẹn liên kết.
+1. **Tạo file ghi chú thô**: Đặt file vào `inbox/` (ví dụ: `inbox/pg-timeout.md`) hoặc `nodes/` (file `.txt` có header metadata `Item`, `Type`, `Domain`, `Content`).
+2. **Kích hoạt Agent Skill**:
+   - Sử dụng **`capture-knowledge`** cho ghi chú thô tự do: AI sẽ tự động kiểm tra trùng lặp (Deduplication), chọn template chuẩn hóa, phân loại vào `docs/` hoặc `labs/`, và cập nhật menu navigation.
+   - Sử dụng **`import-txt-notes`** cho các file trong `nodes/`: AI sẽ đọc metadata, sinh markdown chuẩn và cập nhật `mkdocs.yml`.
+
+---
+
+### 5.2. Lộ trình 2: Tự thêm bài viết Markdown (.md) tùy chỉnh (Manual Contributor Workflow)
+
+Dành cho trường hợp bạn muốn tự tay biên soạn một bài viết hoàn chỉnh, thêm các phân mục mới hoặc cấu trúc lại menu hiển thị theo ý muốn.
+
+#### Bước 1: Khởi tạo file `.md` và cấu trúc bài viết chuẩn
+
+1. **Chọn thư mục lưu trữ trong `docs/`**:
+   - Lưu đúng theo chuyên mục công nghệ tương ứng:
+     - `docs/postgresql/`: Các bài viết chuyên sâu về PostgreSQL.
+     - `docs/java/`: Các bài viết về Java 21+, JVM internals.
+     - `docs/spring-boot/`: Spring Boot 3.3+, Spring Data, Cloud.
+     - `docs/aws/`: Kiến trúc AWS Cloud, RDS, DynamoDB, S3.
+     - `docs/system-design/`: Kiến trúc phân tán, Outbox, Caching, Sharding.
+     - `docs/standards/`: Các quy chuẩn kỹ thuật hoặc bài viết hướng dẫn chung.
+   - *Lưu ý*: Nếu bài viết là **Best Practice**, hãy lưu vào thư mục con `best-practices/` của domain đó (ví dụ: `docs/spring-boot/best-practices/resilient-webclient.md`).
+
+2. **Quy ước đặt tên file**:
+   - Luôn sử dụng chữ thường, ngăn cách bằng dấu gạch ngang (**kebab-case**).
+   - Ví dụ: `hikaricp-connection-leak.md`, `virtual-thread-pitfalls.md`, `dynamodb-gsi-design.md`.
+
+3. **Cấu trúc nội dung bài viết khuyến nghị**:
+   Bạn có thể tham khảo các template có sẵn trong thư mục `templates/` hoặc viết tự do theo khung chuẩn sau:
+
+   ```markdown
+   # Tên Bài Viết Đầy Đủ (Title H1)
+
+   > Tóm tắt 1-2 câu về vấn đề cốt lõi, giá trị thực tế và bối cảnh áp dụng.
+
+   ## 1. Bối Cảnh & Vấn Đề (Context & Problem Statement)
+
+   Phân tích nguyên nhân gốc rễ và triệu chứng sự cố...
+
+   ## 2. Cơ Chế Hoạt Động (Under the Hood / Deep Dive)
+
+   Giải thích chi tiết cơ chế hoạt động, có thể kèm sơ đồ Mermaid:
+
+   ```mermaid
+   flowchart TD
+       A[Client Request] --> B[API Gateway]
+       B --> C[Spring Boot App]
+   ```
+
+   ## 3. Giải Pháp Kỹ Thuật (Production Implementation)
+
+   ```java
+   // Code minh họa tuân thủ Java 21+ idioms
+   public record PaymentOrder(UUID id, BigDecimal amount) {}
+   ```
+
+   !!! tip "Kinh nghiệm thực chiến (Production Tip)"
+       Sử dụng Admonition (`tip`, `note`, `warning`, `caution`) để nhấn mạnh các lưu ý sống còn.
+
+   ## 4. Tài Liệu Tham Khảo (Official References)
+
+   - [PostgreSQL Official Documentation](https://www.postgresql.org/docs/)
+   - [Spring Boot Reference](https://docs.spring.io/spring-boot/reference/)
+   ```
+
+4. **Nguyên tắc quản lý tài nguyên (Separation of Concerns)**:
+   - **Hình ảnh / Diagram**: Đặt tại `docs/assets/images/` và dẫn link tương đối (ví dụ: `![Diagram](../assets/images/my-diagram.png)`).
+   - **Source code thực thi & Lab test**: Nếu bài viết có kèm Docker Compose, SQL seed, test suite Java, hãy tạo thư mục riêng tại `labs/<topic>/<lab-name>/` (tuyệt đối không đưa source code dự án lớn hoặc binary vào `docs/`).
+
+---
+
+#### Bước 2: Liên kết bài viết vào Menu điều hướng (`mkdocs.yml`)
+
+Mục lục hiển thị trên website được quản lý tập trung tại trường `nav:` trong tệp [mkdocs.yml](mkdocs.yml).
+
+1. **Quy tắc đường dẫn**:
+   - MkDocs tự động coi thư mục `docs/` là thư mục gốc (documentation root).
+   - Vì vậy, đường dẫn trong `nav` **tuyệt đối KHÔNG có tiền tố `docs/`**.
+   - *Đúng*: `spring-boot/hikaricp-tuning.md`
+   - *Sai*: `docs/spring-boot/hikaricp-tuning.md`
+
+2. **Cú pháp thêm bài viết vào menu**:
+   Mở `mkdocs.yml`, tìm đến mục công nghệ tương ứng dưới `nav:`, và thêm một dòng theo cú pháp:
+
+   ```yaml
+   - "Tên hiển thị trên Menu": duong-dan-tu-docs/ten-file.md
+   ```
+
+   > [!TIP]
+   > Luôn bọc tên hiển thị trong dấu ngoặc kép `"` (ví dụ: `"Deep Dive: EXPLAIN ANALYZE"`) để tránh lỗi cú pháp YAML khi tiêu đề chứa ký tự đặc biệt như dấu hai chấm (`:`), gạch ngang (`-`), hoặc ký tự và (`&`).
+
+3. **Ví dụ cụ thể**:
+   Giả sử bạn vừa tạo file `docs/spring-boot/hikaricp-tuning.md`. Hãy mở `mkdocs.yml` và thêm vào mục `Spring Boot`:
+
+   ```yaml
+   nav:
+     - Trang chủ: index.md
+     - Spring Boot:
+         - Tổng quan & Roadmap: spring-boot/index.md
+         - Best Practices:
+             - Tổng quan: spring-boot/best-practices/index.md
+             - "Cấu hình WebClient Kháng lỗi": spring-boot/best-practices/resilient-webclient.md
+         # Thêm bài viết mới vào đây:
+         - "Tối ưu hóa HikariCP Connection Pool": spring-boot/hikaricp-tuning.md
+   ```
+
+---
+
+#### Bước 3: Tạo thêm Group / Phân mục Menu mới (Nested Navigation & Sections)
+
+Khi số lượng bài viết nhiều lên, bạn cần tạo thêm các **Group** (Nhóm bài viết) để menu gọn gàng, có tính phân cấp và chuyên nghiệp.
+
+1. **Hiểu về cấp bậc điều hướng trong Material for MkDocs**:
+   Repository đã bật sẵn các tính năng giao diện cao cấp:
+   - `navigation.tabs`: Mục cấp cao nhất (Level 1) sẽ trở thành **Tab ngang** ở thanh Header.
+   - `navigation.sections`: Các Group con (Level 2) bên trong Tab sẽ hiển thị thành các **khối section** trong sidebar bên trái.
+   - `navigation.expand`: Tự động mở rộng cây thư mục để người đọc dễ tra cứu.
+   - `navigation.indexes`: Cho phép gán trực tiếp một trang tài liệu làm trang index đại diện cho cả một Group.
+
+2. **Cách tạo thêm Group mới bên trong một Tab đã có**:
+   Để tạo một Group con, bạn chỉ cần tạo một nhãn group có thụt đầu dòng (indentation chuẩn YAML với khoảng trắng), theo sau là danh sách các bài viết con:
+
+   ```yaml
+   nav:
+     - Spring Boot:                         # Tab cấp 1 (Header tab)
+         - Tổng quan & Roadmap: spring-boot/index.md
+         - Best Practices:                  # Group cấp 2 (Có sẵn)
+             - Tổng quan: spring-boot/best-practices/index.md
+             - "Cấu hình WebClient Kháng lỗi": spring-boot/best-practices/resilient-webclient.md
+         - How-to:                          # Group cấp 2 (Có sẵn)
+             - "Cấu Hình Virtual Threads": spring-boot/how-to/cau-hinh-virtual-threads-cho-spring-boot-33.md
+         
+         # ==========================================================
+         # TẠO THÊM GROUP MỚI: Performance Tuning
+         # ==========================================================
+         - Performance Tuning:              # Tên Group hiển thị ở Sidebar
+             - "Tối ưu hóa HikariCP": spring-boot/performance/hikaricp-tuning.md
+             - "Chiến lược Caching Redis": spring-boot/performance/redis-caching.md
+             - "Tối ưu Batch Processing": spring-boot/performance/batch-processing.md
+   ```
+
+3. **Cách tạo Sub-group lồng sâu hơn (Level 3)**:
+   Nếu trong một Group lại cần phân nhánh nhỏ hơn, bạn chỉ cần tiếp tục thụt lề thêm một cấp:
+
+   ```yaml
+         - Advanced Architecture:           # Group cấp 2
+             - Event-Driven Architecture:   # Sub-group cấp 3
+                 - "Outbox Pattern với Debezium": spring-boot/architecture/eda/outbox-pattern.md
+                 - "Idempotent Consumer": spring-boot/architecture/eda/idempotent-consumer.md
+             - Security & Auth:             # Sub-group cấp 3
+                 - "OAuth2 & JWT Hardening": spring-boot/architecture/security/jwt-hardening.md
+   ```
+
+4. **Cách tạo một Trụ Cột / Tab cấp cao mới (Top-level Tab)**:
+   Nếu bạn muốn mở thêm một chuyên mục công nghệ hoàn toàn mới (ví dụ: `Kubernetes` hoặc `Kafka`), hãy khai báo ngang hàng với `PostgreSQL`, `Java`, `Spring Boot`:
+
+   ```yaml
+   nav:
+     - Trang chủ: index.md
+     - PostgreSQL:
+         # ...
+     - Spring Boot:
+         # ...
+     # ==========================================================
+     # TẠO TAB MỚI TRÊN THANH HEADER:
+     # ==========================================================
+     - Kubernetes:
+         - Tổng quan: k8s/index.md
+         - Best Practices:
+             - "Cấu hình Pod Resource Limits": k8s/best-practices/pod-limits.md
+             - "Health Checks Liveness & Readiness": k8s/best-practices/health-checks.md
+         - Troubleshooting:
+             - "Xử lý OOMKilled & CrashLoopBackOff": k8s/troubleshooting/oomkilled.md
+   ```
+
+5. **Gán trang Index đại diện cho Group (`navigation.indexes`)**:
+   Khi một Group có một bài viết tổng quan đại diện (thường đặt tên là `index.md`), bạn có thể cấu hình để khi người dùng nhấn vào tiêu đề của Group thì website sẽ mở ngay trang đó:
+
+   ```yaml
+         - Performance Tuning:
+             - spring-boot/performance/index.md   # File này đóng vai trò trang chủ của group
+             - "Tối ưu hóa HikariCP": spring-boot/performance/hikaricp-tuning.md
+   ```
+
+---
+
+#### Bước 4: Kiểm tra và Khắc phục lỗi (Verification & Troubleshooting)
+
+Sau khi tạo bài viết và cấu hình menu, bắt buộc thực hiện kiểm tra 2 bước:
+
+1. **Khởi chạy Local Dev Server (Kiểm tra trực quan)**:
+   ```bash
+   python -m mkdocs serve
+   ```
+   - Truy cập **`http://127.0.0.1:8000`**.
+   - Kiểm tra xem bài viết mới có xuất hiện đúng vị trí trong thanh menu không, click vào xem nội dung, thử chuyển đổi giao diện Sáng / Tối (Light/Dark mode) và kiểm tra hiển thị trên mobile.
+
+2. **Chạy Strict Build (Bắt buộc theo chuẩn AGENTS.md)**:
+   ```bash
+   python -m mkdocs build --strict
+   ```
+   Lệnh phải trả về mã thoát **`0`** (exit code 0) và không có bất kỳ dòng `WARNING` hay `ERROR` nào.
+
+3. **Bảng tra cứu các lỗi thường gặp**:
+
+   | Triệu chứng lỗi | Nguyên nhân | Cách khắc phục |
+   | :--- | :--- | :--- |
+   | `yaml.parser.ParserError: mapping values are not allowed here` | Tiêu đề chứa dấu hai chấm (`:`) mà không bọc trong ngoặc kép `"` | Bọc toàn bộ tiêu đề trong dấu nháy kép, ví dụ: `"Deep Dive: Memory Management"` |
+   | `yaml.scanner.ScannerError: found character '\t' that cannot start any token` | Dùng phím `Tab` thay vì phím `Space` khi thụt lề trong `mkdocs.yml` | Thay thế toàn bộ ký tự Tab bằng 2 hoặc 4 dấu khoảng trắng (spaces) |
+   | `Doc file '...' contains a broken relative link to '...'` | Link trỏ tới file `.md` không tồn tại hoặc sai đường dẫn tương đối | Kiểm tra lại đường dẫn tương đối tính từ file hiện tại đến file đích |
+   | `A file is listed in 'nav' but does not exist on disk` | Gõ sai tên file, hoặc vô tình thêm tiền tố `docs/` vào đường dẫn trong `nav` | Xóa tiền tố `docs/`, kiểm tra chính xác đường dẫn từ thư mục `docs/` |
 
 ---
 
