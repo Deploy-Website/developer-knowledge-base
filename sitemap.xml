@@ -2,146 +2,150 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/aws/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/aws/best-practices/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/aws/best-practices/aurora-s3-export/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/java/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/java/best-practices/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/java/best-practices/exception-handling/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/explain-analyze/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/troubleshooting-locks/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/best-practices/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/best-practices/jsonb-query-optimization/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/best-practices/postgresql-b-tree-index-deduplication/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/best-practices/postgresql-export-import-data/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/postgresql/investigations/inv-001-jsonb-tuning/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/spring-boot/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/spring-boot/best-practices/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/spring-boot/best-practices/resilient-webclient/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/spring-boot/how-to/cau-hinh-virtual-threads-cho-spring-boot-33/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/standards/agents-governance/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/standards/investigation-workflow/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/standards/theme-evaluation/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/standards/txt-import-guide/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/standards/unified-workflow/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/best-practice/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/book-note/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/code-recipe/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/hands-on-lab/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/how-to/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/investigation-case/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/investigation-raw/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/knowledge-note/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/starter-templates/troubleshooting/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/system-design/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/system-design/best-practices/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
+    </url>
+    <url>
+         <loc>https://github.com/vinh-nt/developer-knowledge-base/system-design/best-practices/git-ubuntu-development-setup/</loc>
+         <lastmod>2026-10-27</lastmod>
     </url>
     <url>
          <loc>https://github.com/vinh-nt/developer-knowledge-base/system-design/best-practices/idempotency-and-resilience/</loc>
-         <lastmod>2026-10-26</lastmod>
+         <lastmod>2026-10-27</lastmod>
     </url>
 </urlset>
