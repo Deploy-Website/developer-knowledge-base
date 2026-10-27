@@ -111,6 +111,7 @@ nav:
       - Best Practices:
           - Tổng quan: system-design/best-practices/index.md
           - "Thiết kế Idempotency & Phòng vệ Sự cố": system-design/best-practices/idempotency-and-resilience.md
+          - Git Ubuntu Setup: system-design/best-practices/git-ubuntu-development-setup.md
   - Engineering Standards:
       - Agent Governance & Rules: standards/agents-governance.md
       - Quy Trình Quản Trị Hợp Nhất: standards/unified-workflow.md
