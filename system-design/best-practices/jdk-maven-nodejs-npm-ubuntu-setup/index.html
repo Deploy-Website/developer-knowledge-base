@@ -1,0 +1,3568 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Hướng dẫn thiết lập môi trường phát triển Spring Boot và Nuxt trên WSL Ubuntu với Amazon Corretto 17, Maven Wrapper, NVM và npm.">
+      
+      
+        <meta name="author" content="Senior Software Architect & AI Agent Engineer">
+      
+      
+        <link rel="canonical" href="https://github.com/vinh-nt/developer-knowledge-base/system-design/best-practices/jdk-maven-nodejs-npm-ubuntu-setup/">
+      
+      
+        <link rel="prev" href="../docker-engine-ubuntu-setup/">
+      
+      
+        <link rel="next" href="../">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Cài đặt Amazon Corretto 17, Maven, Node.js và npm trên WSL Ubuntu - Developer Knowledge Base</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cai-at-amazon-corretto-17-maven-nodejs-va-npm-tren-wsl-ubuntu" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Developer Knowledge Base" class="md-header__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Developer Knowledge Base
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Cài đặt Amazon Corretto 17, Maven, Node.js và npm trên WSL Ubuntu
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Chuyển sang Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Chuyển sang Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Trang chủ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../postgresql/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  PostgreSQL
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../java/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Java
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../spring-boot/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Spring Boot
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../aws/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  AWS
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  System Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../standards/agents-governance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Engineering Standards
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Developer Knowledge Base" class="md-nav__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Developer Knowledge Base
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trang chủ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../postgresql/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PostgreSQL
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../postgresql/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/best-practices/jsonb-query-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tối ưu hóa Truy vấn & Chỉ mục JSONB
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/best-practices/postgresql-b-tree-index-deduplication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL B-Tree Index Deduplication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/best-practices/postgresql-export-import-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Export/Import Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/explain-analyze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: EXPLAIN ANALYZE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/troubleshooting-locks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting: Lock Contention
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/investigations/inv-001-jsonb-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation: JSONB GIN Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../java/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Java
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../java/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/best-practices/exception-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Xử lý Ngoại lệ Chuẩn mực
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../spring-boot/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spring Boot
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Spring Boot
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../spring-boot/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spring-boot/best-practices/resilient-webclient/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cấu hình WebClient Kháng lỗi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spring-boot/how-to/cau-hinh-virtual-threads-cho-spring-boot-33/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cấu Hình Virtual Threads Cho Spring Boot 3.3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../aws/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../aws/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../aws/best-practices/aurora-s3-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Export Aurora PostgreSQL sang S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Design
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    System Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ubuntu Setup
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ubuntu Setup
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-ubuntu-development-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docker-engine-ubuntu-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Engine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java, Maven và Node.js
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java, Maven và Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-tong-quan-kien-truc-va-lua-chon-cong-cu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Tổng quan kiến trúc và lựa chọn công cụ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-chuan-bi-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Chuẩn bị Ubuntu
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-cai-amazon-corretto-jdk-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Cài Amazon Corretto JDK 17
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Cài Amazon Corretto JDK 17">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-them-apt-repository-cua-amazon-corretto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. Thêm APT repository của Amazon Corretto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-cai-jdk-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. Cài JDK 17
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-at-corretto-17-lam-java-mac-inh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3. Đặt Corretto 17 làm Java mặc định
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-cau-hinh-java_home" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4. Cấu hình JAVA_HOME
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cai-apache-maven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Cài Apache Maven
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Cài Apache Maven">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-cai-maven-qua-apt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1. Cài Maven qua APT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-uu-tien-maven-wrapper-trong-du-an" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2. Ưu tiên Maven Wrapper trong dự án
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-giu-maven-dependency-cache-tren-linux-filesystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3. Giữ Maven dependency cache trên Linux filesystem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-cai-nodejs-va-npm-bang-nvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Cài Node.js và npm bằng NVM
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Cài Node.js và npm bằng NVM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-cai-nvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1. Cài NVM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-cai-nodejs-lts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2. Cài Node.js LTS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-quan-ly-nodejs-theo-tung-project-bang-nvmrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3. Quản lý Node.js theo từng project bằng .nvmrc
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cau-hinh-npm-cho-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Cấu hình npm cho development
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Cấu hình npm cho development">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-khong-dung-sudo-voi-npm-do-nvm-quan-ly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1. Không dùng sudo với npm do NVM quản lý
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-kiem-tra-npm-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2. Kiểm tra npm config
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-kiem-tra-toan-bo-toolchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Kiểm tra toàn bộ toolchain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-best-practices-cho-spring-boot-va-nuxt-trong-wsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Best practices cho Spring Boot và Nuxt trong WSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Best practices cho Spring Boot và Nuxt trong WSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-luu-source-code-trong-linux-filesystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1. Lưu source code trong Linux filesystem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-cach-khoi-chay-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2. Cách khởi chạy project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-ide-va-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3. IDE và Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-nguyen-tac-quan-ly-phien-ban" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4. Nguyên tắc quản lý phiên bản
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-troubleshooting-thuong-gap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Troubleshooting thường gặp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-checklist-hoan-thanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Checklist hoàn thành
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-tai-lieu-tham-khao-chinh-thuc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Tài liệu tham khảo chính thức
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_3" id="__nav_6_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../idempotency-and-resilience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thiết kế Idempotency & Phòng vệ Sự cố
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Standards
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engineering Standards
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/agents-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance & Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/unified-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quy Trình Quản Trị Hợp Nhất
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/investigation-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quản Trị Điều Tra (Investigations)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/txt-import-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hướng Dẫn Nhập Ghi Chú TXT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/theme-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kiến trúc & Theme Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6" id="__nav_7_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Templates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Templates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/knowledge-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/book-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Book Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-To Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/code-recipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Recipe Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/hands-on-lab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hands-on Lab Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/investigation-raw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raw Investigation Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/investigation-case/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation Case Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/best-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practice Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-tong-quan-kien-truc-va-lua-chon-cong-cu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Tổng quan kiến trúc và lựa chọn công cụ
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-chuan-bi-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Chuẩn bị Ubuntu
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-cai-amazon-corretto-jdk-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Cài Amazon Corretto JDK 17
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Cài Amazon Corretto JDK 17">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-them-apt-repository-cua-amazon-corretto" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.1. Thêm APT repository của Amazon Corretto
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-cai-jdk-17" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.2. Cài JDK 17
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-at-corretto-17-lam-java-mac-inh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.3. Đặt Corretto 17 làm Java mặc định
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#34-cau-hinh-java_home" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3.4. Cấu hình JAVA_HOME
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-cai-apache-maven" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Cài Apache Maven
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Cài Apache Maven">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#41-cai-maven-qua-apt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.1. Cài Maven qua APT
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#42-uu-tien-maven-wrapper-trong-du-an" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.2. Ưu tiên Maven Wrapper trong dự án
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#43-giu-maven-dependency-cache-tren-linux-filesystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4.3. Giữ Maven dependency cache trên Linux filesystem
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-cai-nodejs-va-npm-bang-nvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Cài Node.js và npm bằng NVM
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Cài Node.js và npm bằng NVM">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#51-cai-nvm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.1. Cài NVM
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#52-cai-nodejs-lts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.2. Cài Node.js LTS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#53-quan-ly-nodejs-theo-tung-project-bang-nvmrc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5.3. Quản lý Node.js theo từng project bằng .nvmrc
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-cau-hinh-npm-cho-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Cấu hình npm cho development
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Cấu hình npm cho development">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-khong-dung-sudo-voi-npm-do-nvm-quan-ly" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.1. Không dùng sudo với npm do NVM quản lý
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-kiem-tra-npm-config" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6.2. Kiểm tra npm config
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-kiem-tra-toan-bo-toolchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Kiểm tra toàn bộ toolchain
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-best-practices-cho-spring-boot-va-nuxt-trong-wsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Best practices cho Spring Boot và Nuxt trong WSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Best practices cho Spring Boot và Nuxt trong WSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#81-luu-source-code-trong-linux-filesystem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.1. Lưu source code trong Linux filesystem
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#82-cach-khoi-chay-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.2. Cách khởi chạy project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#83-ide-va-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.3. IDE và Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#84-nguyen-tac-quan-ly-phien-ban" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8.4. Nguyên tắc quản lý phiên bản
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-troubleshooting-thuong-gap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Troubleshooting thường gặp
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-checklist-hoan-thanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Checklist hoàn thành
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-tai-lieu-tham-khao-chinh-thuc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Tài liệu tham khảo chính thức
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="cai-at-amazon-corretto-17-maven-nodejs-va-npm-tren-wsl-ubuntu">Cài đặt Amazon Corretto 17, Maven, Node.js và npm trên WSL Ubuntu<a class="headerlink" href="#cai-at-amazon-corretto-17-maven-nodejs-va-npm-tren-wsl-ubuntu" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Mục tiêu:</strong> Thiết lập môi trường development dùng cho <strong>Java Spring Boot</strong> và <strong>Nuxt</strong> trực tiếp trong WSL Ubuntu; đồng thời dễ quản lý, cập nhật và tái tạo giữa các dự án.</p>
+</blockquote>
+<p>Hướng dẫn giả định <strong>WSL 2 và Ubuntu đã được cài đặt</strong>, và sử dụng terminal <strong>Ubuntu</strong> (không chạy các lệnh Linux trong PowerShell).</p>
+<h2 id="1-tong-quan-kien-truc-va-lua-chon-cong-cu">1. Tổng quan kiến trúc và lựa chọn công cụ<a class="headerlink" href="#1-tong-quan-kien-truc-va-lua-chon-cong-cu" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Phương án khuyến nghị</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JDK</td>
+<td><strong>Amazon Corretto 17 LTS</strong>, APT repository của AWS</td>
+<td>Nhận bản cập nhật bảo mật qua APT, phù hợp dự án Spring Boot dùng Java 17</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td><strong>Maven 3.x</strong> qua APT; ưu tiên <strong>Maven Wrapper</strong> của dự án</td>
+<td>Giảm sai khác Maven version giữa developer và CI/CD</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td><strong>Node.js 24 LTS</strong> qua NVM, nếu đáp ứng yêu cầu của dự án</td>
+<td>Quản lý phiên bản Node riêng cho từng dự án</td>
+</tr>
+<tr>
+<td>npm</td>
+<td>Phiên bản đi kèm Node.js</td>
+<td>Không cần cài npm độc lập qua APT</td>
+</tr>
+<tr>
+<td>Công cụ hệ thống</td>
+<td>Git, curl, wget, build-essential, Python 3</td>
+<td>Hỗ trợ tải dependencies và biên dịch native Node.js modules</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>Docker Engine trong WSL Ubuntu (nếu đã cài)</td>
+<td>Chạy PostgreSQL, Redis và các dịch vụ phụ trợ</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Tư duy cấu hình tối ưu</p>
+<ul>
+<li><strong>Java, Maven, Node.js và source code</strong> nằm trong filesystem của Ubuntu (<code>~/projects</code>).</li>
+<li><strong>Database, Redis và các service phụ trợ</strong> có thể chạy bằng Docker Engine trong WSL.</li>
+<li><strong>IDE trên Windows</strong> kết nối qua WSL extension; trình biên dịch và công cụ build vẫn chạy trong Ubuntu.</li>
+<li><strong>Phiên bản công cụ của từng dự án</strong> nên được cố định bằng Maven Wrapper và <code>.nvmrc</code>.</li>
+</ul>
+</div>
+<h2 id="2-chuan-bi-ubuntu">2. Chuẩn bị Ubuntu<a class="headerlink" href="#2-chuan-bi-ubuntu" title="Permanent link">&para;</a></h2>
+<p>Cập nhật thông tin repository:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
+</span></code></pre></div>
+<p>Nếu bạn muốn cập nhật các package hệ thống hiện có, có thể chạy (không bắt buộc trong quá trình cài toolchain):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>upgrade
+</span></code></pre></div>
+<p>Cài các công cụ thiết yếu:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span>curl<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span>wget<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span>ca-certificates<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">  </span>gnupg<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">  </span>git<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span>unzip<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span>zip<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span>build-essential<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">  </span>python3
+</span></code></pre></div>
+<p>Kiểm tra phiên bản Ubuntu:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cat<span class="w"> </span>/etc/os-release
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>uname<span class="w"> </span>-m
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Vì sao cài build-essential và Python 3?</p>
+<p>Một số npm package sử dụng native modules và cần compiler, <code>make</code>, Python 3 khi phải build từ source. Không phải dự án Node.js nào cũng cần đến chúng, nhưng cài sẵn sẽ hữu ích cho môi trường development.</p>
+</div>
+<h2 id="3-cai-amazon-corretto-jdk-17">3. Cài Amazon Corretto JDK 17<a class="headerlink" href="#3-cai-amazon-corretto-jdk-17" title="Permanent link">&para;</a></h2>
+<h3 id="31-them-apt-repository-cua-amazon-corretto">3.1. Thêm APT repository của Amazon Corretto<a class="headerlink" href="#31-them-apt-repository-cua-amazon-corretto" title="Permanent link">&para;</a></h3>
+<p>Tải và đăng ký khóa GPG của repository:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://apt.corretto.aws/corretto.key<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>gpg<span class="w"> </span>--batch<span class="w"> </span>--yes<span class="w"> </span>--dearmor<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">      </span>-o<span class="w"> </span>/usr/share/keyrings/corretto-keyring.gpg
+</span></code></pre></div>
+<p>Thêm repository:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;deb [signed-by=/usr/share/keyrings/corretto-keyring.gpg] https://apt.corretto.aws stable main&quot;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>/etc/apt/sources.list.d/corretto.list
+</span></code></pre></div>
+<p>Cập nhật package index:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>update
+</span></code></pre></div>
+<h3 id="32-cai-jdk-17">3.2. Cài JDK 17<a class="headerlink" href="#32-cai-jdk-17" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>java-17-amazon-corretto-jdk
+</span></code></pre></div>
+<p>Kiểm tra:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>java<span class="w"> </span>-version
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>javac<span class="w"> </span>-version
+</span></code></pre></div>
+<p>Kết quả kỳ vọng có dạng:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>openjdk version &quot;17.0.x&quot; ...
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>OpenJDK Runtime Environment Corretto-17...
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>OpenJDK 64-Bit Server VM Corretto-17...
+</span></code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Vì sao chọn JDK thay vì JRE?</p>
+<p>JDK chứa <code>javac</code> và các công cụ cần thiết để <strong>biên dịch</strong> và debug Java. JRE đơn thuần không đáp ứng đầy đủ nhu cầu phát triển phần mềm.</p>
+</div>
+<h3 id="33-at-corretto-17-lam-java-mac-inh">3.3. Đặt Corretto 17 làm Java mặc định<a class="headerlink" href="#33-at-corretto-17-lam-java-mac-inh" title="Permanent link">&para;</a></h3>
+<p>Nếu máy có nhiều JDK:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>java
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>javac
+</span></code></pre></div>
+<p>Chọn bản <strong>Amazon Corretto 17</strong> ở cả hai lệnh.</p>
+<p>Xem Java và compiler hiện tại:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>readlink<span class="w"> </span>-f<span class="w"> </span>/usr/bin/java
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>readlink<span class="w"> </span>-f<span class="w"> </span>/usr/bin/javac
+</span></code></pre></div>
+<h3 id="34-cau-hinh-java_home">3.4. Cấu hình <code>JAVA_HOME</code><a class="headerlink" href="#34-cau-hinh-java_home" title="Permanent link">&para;</a></h3>
+<p>Tìm thư mục gốc JDK từ <code>javac</code> hiện được chọn:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>readlink<span class="w"> </span>-f<span class="w"> </span>/usr/bin/javac<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+</span></code></pre></div>
+<p>Ví dụ kết quả:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>/usr/lib/jvm/java-17-amazon-corretto
+</span></code></pre></div>
+<p>Mở cấu hình Bash:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>nano<span class="w"> </span>~/.bashrc
+</span></code></pre></div>
+<p>Thêm <strong>một lần</strong> vào cuối file:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Dùng JDK đang được chọn bởi update-alternatives</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>dirname<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>readlink<span class="w"> </span>-f<span class="w"> </span>/usr/bin/javac<span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+</span></code></pre></div>
+<p>Nạp lại shell:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;JAVA_HOME=%s\n&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$JAVA_HOME</span><span class="s2">&quot;</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>java<span class="w"> </span>-version
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Đường dẫn JAVA_HOME</p>
+<p>Lấy <code>JAVA_HOME</code> từ đường dẫn của <code>javac</code> giúp tránh hard-code một đường dẫn có thể khác nhau giữa các phiên bản Ubuntu hoặc kiến trúc. Nếu dự án bắt buộc sử dụng Corretto 17 dù Java mặc định thay đổi, hãy cố định <code>JAVA_HOME</code> theo đường dẫn JDK Corretto thực tế trên máy.</p>
+</div>
+<h2 id="4-cai-apache-maven">4. Cài Apache Maven<a class="headerlink" href="#4-cai-apache-maven" title="Permanent link">&para;</a></h2>
+<h3 id="41-cai-maven-qua-apt">4.1. Cài Maven qua APT<a class="headerlink" href="#41-cai-maven-qua-apt" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>maven
+</span></code></pre></div>
+<p>Kiểm tra:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>mvn<span class="w"> </span>-version
+</span></code></pre></div>
+<p>Đầu ra cần xác nhận Maven và Java 17:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>Apache Maven 3.x.x
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a>Java version: 17.x.x
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>Java home: /usr/lib/jvm/...
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Có cần Maven mới nhất không?</p>
+<p>Phiên bản Maven từ repository Ubuntu có thể không phải phiên bản mới nhất. Điều quan trọng là <strong>phiên bản phù hợp với project</strong>. Với dự án có Maven Wrapper, phiên bản Maven của dự án sẽ được quản lý riêng mà không cần nâng Maven hệ thống.</p>
+</div>
+<h3 id="42-uu-tien-maven-wrapper-trong-du-an">4.2. Ưu tiên Maven Wrapper trong dự án<a class="headerlink" href="#42-uu-tien-maven-wrapper-trong-du-an" title="Permanent link">&para;</a></h3>
+<p>Nếu repository đã có <code>mvnw</code> và thư mục <code>.mvn/wrapper/</code>, hãy chạy:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="nb">cd</span><span class="w"> </span>~/projects/spring-backend
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>./mvnw<span class="w"> </span>clean<span class="w"> </span>verify
+</span></code></pre></div>
+<p>Maven Wrapper sử dụng bản Maven theo cấu hình của project, thay vì phụ thuộc hoàn toàn vào lệnh <code>mvn</code> hệ thống.</p>
+<p>Nếu project chưa có wrapper và bạn có quyền cập nhật repository:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>mvn<span class="w"> </span>wrapper:wrapper
+</span></code></pre></div>
+<p>Commit các file Maven Wrapper cần thiết vào Git theo quy ước của dự án.</p>
+<h3 id="43-giu-maven-dependency-cache-tren-linux-filesystem">4.3. Giữ Maven dependency cache trên Linux filesystem<a class="headerlink" href="#43-giu-maven-dependency-cache-tren-linux-filesystem" title="Permanent link">&para;</a></h3>
+<p>Theo mặc định, Maven lưu artifacts trong:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>~/.m2/repository
+</span></code></pre></div>
+<p>Nên giữ cache tại đây. Không cần thiết lập <code>MAVEN_HOME</code> hoặc <code>M2_HOME</code> khi cài Maven qua APT.</p>
+<h2 id="5-cai-nodejs-va-npm-bang-nvm">5. Cài Node.js và npm bằng NVM<a class="headerlink" href="#5-cai-nodejs-va-npm-bang-nvm" title="Permanent link">&para;</a></h2>
+<p><strong>NVM (Node Version Manager)</strong> quản lý nhiều phiên bản Node.js trong thư mục home của user. Đây là phương án phù hợp cho nhiều project Nuxt có yêu cầu runtime khác nhau.</p>
+<h3 id="51-cai-nvm">5.1. Cài NVM<a class="headerlink" href="#51-cai-nvm" title="Permanent link">&para;</a></h3>
+<p>Ví dụ sử dụng NVM <code>v0.40.8</code> (nên đối chiếu release mới nhất trước khi nâng cấp):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>curl<span class="w"> </span>-fsSLo<span class="w"> </span>/tmp/install-nvm.sh<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">  </span>https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
+</span><span id="__span-23-4"><a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Xem nội dung script trước khi chạy</span>
+</span><span id="__span-23-5"><a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>less<span class="w"> </span>/tmp/install-nvm.sh
+</span><span id="__span-23-6"><a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a>
+</span><span id="__span-23-7"><a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>bash<span class="w"> </span>/tmp/install-nvm.sh
+</span></code></pre></div>
+<p>NVM thông thường cập nhật shell profile (chẳng hạn <code>~/.bashrc</code>). Nạp lại shell:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</span></code></pre></div>
+<p>Kiểm tra:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>nvm
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>nvm<span class="w"> </span>--version
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">NVM là shell function</p>
+<p><code>command -v nvm</code> nên in ra <code>nvm</code>. Không nhất thiết có file binary <code>nvm</code> trong <code>/usr/bin</code> hoặc <code>/usr/local/bin</code>.</p>
+</div>
+<h3 id="52-cai-nodejs-lts">5.2. Cài Node.js LTS<a class="headerlink" href="#52-cai-nodejs-lts" title="Permanent link">&para;</a></h3>
+<p>Trong hướng dẫn này, sử dụng <strong>Node.js 24 LTS</strong> làm ví dụ. Hãy ưu tiên version được khai báo bởi dự án Nuxt (<code>package.json</code>, <code>.nvmrc</code>) nếu khác.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>nvm<span class="w"> </span>install<span class="w"> </span><span class="m">24</span>
+</span><span id="__span-26-2"><a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>nvm<span class="w"> </span><span class="nb">alias</span><span class="w"> </span>default<span class="w"> </span><span class="m">24</span>
+</span><span id="__span-26-3"><a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>nvm<span class="w"> </span>use<span class="w"> </span><span class="m">24</span>
+</span></code></pre></div>
+<p>Kiểm tra:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>node<span class="w"> </span>--version
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>npm<span class="w"> </span>--version
+</span></code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Không cài npm riêng bằng APT</p>
+<p>Khi dùng NVM, <code>npm</code> đi kèm bản Node.js đã cài. Tránh chạy <code>sudo apt install nodejs npm</code> hoặc <code>sudo npm install</code> vì dễ dẫn đến nhiều bộ Node/npm và xung đột quyền file.</p>
+</div>
+<h3 id="53-quan-ly-nodejs-theo-tung-project-bang-nvmrc">5.3. Quản lý Node.js theo từng project bằng <code>.nvmrc</code><a class="headerlink" href="#53-quan-ly-nodejs-theo-tung-project-bang-nvmrc" title="Permanent link">&para;</a></h3>
+<p>Ví dụ:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>projects/
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>├── nuxt-project-a/
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>│   └── .nvmrc       # 22
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a>└── nuxt-project-b/
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>    └── .nvmrc       # 24
+</span></code></pre></div>
+<p>Nội dung <code>nuxt-project-b/.nvmrc</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a>24
+</span></code></pre></div>
+<p>Trong terminal:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="nb">cd</span><span class="w"> </span>~/projects/nuxt-project-b
+</span><span id="__span-30-2"><a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>nvm<span class="w"> </span>install
+</span><span id="__span-30-3"><a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a>nvm<span class="w"> </span>use
+</span><span id="__span-30-4"><a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>node<span class="w"> </span>--version
+</span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Best practice cho CI/CD và teamwork</p>
+<p>Commit <code>.nvmrc</code> vào Git để mọi developer dễ sử dụng cùng major Node.js. Đồng thời khai báo <code>engines.node</code> trong <code>package.json</code> nếu dự án cần ràng buộc tương thích rõ ràng.</p>
+</div>
+<h2 id="6-cau-hinh-npm-cho-development">6. Cấu hình npm cho development<a class="headerlink" href="#6-cau-hinh-npm-cho-development" title="Permanent link">&para;</a></h2>
+<h3 id="61-khong-dung-sudo-voi-npm-do-nvm-quan-ly">6.1. Không dùng <code>sudo</code> với npm do NVM quản lý<a class="headerlink" href="#61-khong-dung-sudo-voi-npm-do-nvm-quan-ly" title="Permanent link">&para;</a></h3>
+<p>Cài dependencies cho project:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a>npm<span class="w"> </span>install
+</span></code></pre></div>
+<p>Nếu project đã có <code>package-lock.json</code>, ưu tiên lệnh:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a>npm<span class="w"> </span>ci
+</span></code></pre></div>
+<p><code>npm ci</code> yêu cầu lockfile hợp lệ, cài theo lockfile và phù hợp cho môi trường cần tái tạo dependencies nhất quán. Nó cũng thay thế <code>node_modules</code> hiện tại khi chạy.</p>
+<h3 id="62-kiem-tra-npm-config">6.2. Kiểm tra npm config<a class="headerlink" href="#62-kiem-tra-npm-config" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>npm<span class="w"> </span>config<span class="w"> </span>get<span class="w"> </span>registry
+</span><span id="__span-33-2"><a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a>npm<span class="w"> </span>config<span class="w"> </span>get<span class="w"> </span>cache
+</span><span id="__span-33-3"><a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a>npm<span class="w"> </span>config<span class="w"> </span>get<span class="w"> </span>prefix
+</span></code></pre></div>
+<p>Registry công khai mặc định:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>https://registry.npmjs.org/
+</span></code></pre></div>
+<p>Không tùy tiện đặt <code>prefix</code> global khi sử dụng NVM; có thể gây xung đột với cách NVM quản lý Node.js/npm.</p>
+<h2 id="7-kiem-tra-toan-bo-toolchain">7. Kiểm tra toàn bộ toolchain<a class="headerlink" href="#7-kiem-tra-toan-bo-toolchain" title="Permanent link">&para;</a></h2>
+<p>Chạy lần lượt:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;===== JAVA =====&#39;</span>
+</span><span id="__span-35-2"><a id="__codelineno-35-2" name="__codelineno-35-2" href="#__codelineno-35-2"></a>java<span class="w"> </span>-version
+</span><span id="__span-35-3"><a id="__codelineno-35-3" name="__codelineno-35-3" href="#__codelineno-35-3"></a>javac<span class="w"> </span>-version
+</span><span id="__span-35-4"><a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;JAVA_HOME=%s\n&#39;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$JAVA_HOME</span><span class="s2">&quot;</span>
+</span><span id="__span-35-5"><a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>
+</span><span id="__span-35-6"><a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;===== MAVEN =====&#39;</span>
+</span><span id="__span-35-7"><a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>mvn<span class="w"> </span>-version
+</span><span id="__span-35-8"><a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>
+</span><span id="__span-35-9"><a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;===== NODE.JS =====&#39;</span>
+</span><span id="__span-35-10"><a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a>node<span class="w"> </span>--version
+</span><span id="__span-35-11"><a id="__codelineno-35-11" name="__codelineno-35-11" href="#__codelineno-35-11"></a>
+</span><span id="__span-35-12"><a id="__codelineno-35-12" name="__codelineno-35-12" href="#__codelineno-35-12"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;===== NPM =====&#39;</span>
+</span><span id="__span-35-13"><a id="__codelineno-35-13" name="__codelineno-35-13" href="#__codelineno-35-13"></a>npm<span class="w"> </span>--version
+</span><span id="__span-35-14"><a id="__codelineno-35-14" name="__codelineno-35-14" href="#__codelineno-35-14"></a>
+</span><span id="__span-35-15"><a id="__codelineno-35-15" name="__codelineno-35-15" href="#__codelineno-35-15"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;===== NVM =====&#39;</span>
+</span><span id="__span-35-16"><a id="__codelineno-35-16" name="__codelineno-35-16" href="#__codelineno-35-16"></a>nvm<span class="w"> </span>--version
+</span><span id="__span-35-17"><a id="__codelineno-35-17" name="__codelineno-35-17" href="#__codelineno-35-17"></a>nvm<span class="w"> </span>current
+</span></code></pre></div>
+<p>Kiểm tra các đường dẫn executable:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="nb">type</span><span class="w"> </span>-a<span class="w"> </span>java
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="nb">type</span><span class="w"> </span>-a<span class="w"> </span>javac
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="nb">type</span><span class="w"> </span>-a<span class="w"> </span>mvn
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="nb">type</span><span class="w"> </span>-a<span class="w"> </span>node
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="nb">type</span><span class="w"> </span>-a<span class="w"> </span>npm
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Đường dẫn kỳ vọng</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Java</td>
+<td><code>/usr/bin/java</code> → JDK trong <code>/usr/lib/jvm/</code></td>
+</tr>
+<tr>
+<td>Javac</td>
+<td><code>/usr/bin/javac</code> → Amazon Corretto JDK 17</td>
+</tr>
+<tr>
+<td>Maven</td>
+<td><code>/usr/bin/mvn</code></td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td><code>~/.nvm/versions/node/.../bin/node</code></td>
+</tr>
+<tr>
+<td>npm</td>
+<td><code>~/.nvm/versions/node/.../bin/npm</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Tránh sử dụng nhầm executable trên Windows</p>
+<p>Nếu <code>node</code>, <code>npm</code>, <code>java</code> hoặc <code>mvn</code> trỏ đến <code>/mnt/c/...</code>, kiểm tra lại <code>PATH</code> và shell profile. Trong WSL, nên sử dụng phiên bản Linux thay vì gọi trực tiếp executable từ Windows.</p>
+</div>
+<h2 id="8-best-practices-cho-spring-boot-va-nuxt-trong-wsl">8. Best practices cho Spring Boot và Nuxt trong WSL<a class="headerlink" href="#8-best-practices-cho-spring-boot-va-nuxt-trong-wsl" title="Permanent link">&para;</a></h2>
+<h3 id="81-luu-source-code-trong-linux-filesystem">8.1. Lưu source code trong Linux filesystem<a class="headerlink" href="#81-luu-source-code-trong-linux-filesystem" title="Permanent link">&para;</a></h3>
+<p>Khuyến nghị:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>/home/&lt;linux-user&gt;/projects/
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>├── spring-backend/
+</span><span id="__span-37-3"><a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a>├── nuxt-frontend/
+</span><span id="__span-37-4"><a id="__codelineno-37-4" name="__codelineno-37-4" href="#__codelineno-37-4"></a>└── dev-infra/
+</span></code></pre></div>
+<p>Tránh đặt workspace thường xuyên build trong <code>/mnt/c/</code> vì I/O và file watching xuyên filesystem Windows/Linux có thể kém hiệu quả hơn.</p>
+<h3 id="82-cach-khoi-chay-project">8.2. Cách khởi chạy project<a class="headerlink" href="#82-cach-khoi-chay-project" title="Permanent link">&para;</a></h3>
+<p><strong>Spring Boot:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="nb">cd</span><span class="w"> </span>~/projects/spring-backend
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a>./mvnw<span class="w"> </span>spring-boot:run
+</span></code></pre></div>
+<p><strong>Nuxt:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="nb">cd</span><span class="w"> </span>~/projects/nuxt-frontend
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a>nvm<span class="w"> </span>use
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a>npm<span class="w"> </span>ci
+</span><span id="__span-39-4"><a id="__codelineno-39-4" name="__codelineno-39-4" href="#__codelineno-39-4"></a>npm<span class="w"> </span>run<span class="w"> </span>dev
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Điều kiện áp dụng các lệnh ví dụ</p>
+<p><code>./mvnw</code> chỉ sử dụng được khi project có Maven Wrapper; <code>nvm use</code> không truyền phiên bản cần file <code>.nvmrc</code>; <code>npm ci</code> cần <code>package-lock.json</code>; <code>npm run dev</code> cần script <code>dev</code> trong <code>package.json</code>.</p>
+</div>
+<h3 id="83-ide-va-docker">8.3. IDE và Docker<a class="headerlink" href="#83-ide-va-docker" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Chạy <strong>VS Code trên Windows</strong> với extension <strong>WSL</strong>, mở thư mục project trong Ubuntu.</li>
+<li>Chạy Maven, Node.js và npm trong terminal WSL.</li>
+<li>Chạy PostgreSQL, Redis và dịch vụ phụ trợ bằng Docker Engine trong WSL nếu đã cài.</li>
+<li>Giữ <code>~/.m2/repository</code> và <code>node_modules</code> trong Linux filesystem.</li>
+</ul>
+<h3 id="84-nguyen-tac-quan-ly-phien-ban">8.4. Nguyên tắc quản lý phiên bản<a class="headerlink" href="#84-nguyen-tac-quan-ly-phien-ban" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>JDK:</strong> Dùng phiên bản theo tiêu chuẩn của project, ở đây là Corretto 17.</li>
+<li><strong>Maven:</strong> Ưu tiên <code>./mvnw</code> hơn <code>mvn</code> khi project có Maven Wrapper.</li>
+<li><strong>Node.js:</strong> Ưu tiên <code>.nvmrc</code> của project; dùng <code>nvm alias default 24</code> cho shell không thuộc project cụ thể.</li>
+<li><strong>npm:</strong> Sử dụng lockfile và <code>npm ci</code> khi cần môi trường reproducible.</li>
+</ul>
+<h2 id="9-troubleshooting-thuong-gap">9. Troubleshooting thường gặp<a class="headerlink" href="#9-troubleshooting-thuong-gap" title="Permanent link">&para;</a></h2>
+<details class="question">
+<summary><code>nvm: command not found</code> sau khi cài</summary>
+<p>Thử mở terminal mới hoặc nạp lại profile:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a><span class="nb">source</span><span class="w"> </span>~/.bashrc
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>nvm
+</span></code></pre></div>
+<p>Nếu vẫn không có, xem hướng dẫn cài NVM chính thức và kiểm tra script đã cập nhật đúng shell profile hay chưa.</p>
+</details>
+<details class="question">
+<summary><code>mvn -version</code> không sử dụng Java 17</summary>
+<p>Kiểm tra:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a>java<span class="w"> </span>-version
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a>javac<span class="w"> </span>-version
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$JAVA_HOME</span><span class="s2">&quot;</span>
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a>sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>java
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a>sudo<span class="w"> </span>update-alternatives<span class="w"> </span>--config<span class="w"> </span>javac
+</span></code></pre></div>
+<p>Nếu dùng nhiều JDK, chắc chắn <code>JAVA_HOME</code> trỏ đến JDK đúng yêu cầu của dự án.</p>
+</details>
+<details class="question">
+<summary>npm hoặc Node.js đang trỏ đến đường dẫn Windows</summary>
+<p>Kiểm tra:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-42-1"><a id="__codelineno-42-1" name="__codelineno-42-1" href="#__codelineno-42-1"></a><span class="nb">type</span><span class="w"> </span>-a<span class="w"> </span>node<span class="w"> </span>npm
+</span><span id="__span-42-2"><a id="__codelineno-42-2" name="__codelineno-42-2" href="#__codelineno-42-2"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+</span><span id="__span-42-3"><a id="__codelineno-42-3" name="__codelineno-42-3" href="#__codelineno-42-3"></a>nvm<span class="w"> </span>current
+</span></code></pre></div>
+<p>Đảm bảo NVM được load trong <code>~/.bashrc</code> và ưu tiên executable từ <code>~/.nvm/versions/node/.../bin/</code>.</p>
+</details>
+<details class="question">
+<summary>APT/curl/npm gặp lỗi certificate khi ở mạng công ty</summary>
+<p>Kiểm tra certificate chain và root CA của proxy doanh nghiệp. Nếu cần, cài CA tin cậy vào trust store Ubuntu theo quy trình được tổ chức cho phép. <strong>Không tắt SSL/TLS verification</strong> bằng các tùy chọn như <code>strict-ssl=false</code> hoặc <code>curl -k</code> để xử lý lâu dài.</p>
+</details>
+<h2 id="10-checklist-hoan-thanh">10. Checklist hoàn thành<a class="headerlink" href="#10-checklist-hoan-thanh" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Ubuntu đã cài các development utilities cần thiết.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>java -version</code> trả về Amazon Corretto 17.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>javac -version</code> là phiên bản 17.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>JAVA_HOME</code> trỏ đến JDK đúng.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>mvn -version</code> sử dụng Java 17.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Maven Wrapper hoạt động ở project Java (nếu có).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>nvm --version</code> chạy thành công.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>node --version</code> khớp phiên bản yêu cầu của project.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>npm --version</code> chạy thành công.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Node/npm trỏ đến thư mục NVM trên Linux.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Source code được lưu trong <code>/home/...</code>, không phải <code>/mnt/c/...</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Build Spring Boot và chạy Nuxt thành công.</li>
+</ul>
+<h2 id="11-tai-lieu-tham-khao-chinh-thuc">11. Tài liệu tham khảo chính thức<a class="headerlink" href="#11-tai-lieu-tham-khao-chinh-thuc" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/generic-linux-install.html">Amazon Corretto 17 — Linux installation</a></li>
+<li><a href="https://maven.apache.org/install.html">Apache Maven — Installation</a></li>
+<li><a href="https://maven.apache.org/wrapper/">Apache Maven Wrapper</a></li>
+<li><a href="https://github.com/nvm-sh/nvm">NVM — GitHub repository và hướng dẫn cài đặt</a></li>
+<li><a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">npm Docs — Downloading and installing Node.js and npm</a></li>
+<li><a href="https://docs.npmjs.com/cli/commands/npm-ci/">npm Docs — npm ci</a></li>
+<li><a href="https://github.com/nodejs/Release#release-schedule">Node.js — Release schedule</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/wsl/filesystems">Microsoft Learn — Working across Windows and Linux file systems</a></li>
+</ol>
+<hr />
+<p><strong>Kết luận:</strong> Sử dụng <strong>Corretto 17 qua APT</strong>, <strong>Maven + Maven Wrapper</strong>, <strong>Node.js/npm qua NVM</strong> và lưu source trong filesystem Ubuntu là cấu hình dễ bảo trì cho môi trường phát triển Spring Boot/Nuxt trên WSL.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.indexes", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
