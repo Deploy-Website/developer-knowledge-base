@@ -114,6 +114,7 @@ nav:
           - Java, Maven và Node.js: system-design/best-practices/jdk-maven-nodejs-npm-ubuntu-setup.md
       - Advanced Tip:
           - VSCode Remode WSL Ubuntu: system-design/best-practices/vscode-wsl-ubuntu-git-merge.md
+          - Spring Boot IDE (IntelliJ / Eclipse WSLg): system-design/best-practices/spring-boot-ide-intellij-eclipse-wsl.md
       - Best Practices:
           - Tổng quan: system-design/best-practices/index.md
           - "Thiết kế Idempotency & Phòng vệ Sự cố": system-design/best-practices/idempotency-and-resilience.md
