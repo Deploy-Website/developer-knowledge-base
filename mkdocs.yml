@@ -115,6 +115,7 @@ nav:
       - Advanced Tip:
           - VSCode Remode WSL Ubuntu: system-design/best-practices/vscode-wsl-ubuntu-git-merge.md
           - Spring Boot IDE (IntelliJ / Eclipse WSLg): system-design/best-practices/spring-boot-ide-intellij-eclipse-wsl.md
+          - PostgreSQL WSL Docker (đa phiên bản): system-design/best-practices/postgresql-multi-version-docker-wsl.md
       - Best Practices:
           - Tổng quan: system-design/best-practices/index.md
           - "Thiết kế Idempotency & Phòng vệ Sự cố": system-design/best-practices/idempotency-and-resilience.md
