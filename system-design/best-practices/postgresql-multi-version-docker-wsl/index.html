@@ -1,0 +1,3908 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Cài đặt, vận hành PostgreSQL 16/17/18 bằng Docker Compose trong WSL2 Ubuntu, kết nối DBeaver Windows và Spring Boot, sao lưu và xử lý lỗi mạng NAT.">
+      
+      
+        <meta name="author" content="Senior Software Architect & AI Agent Engineer">
+      
+      
+        <link rel="canonical" href="https://github.com/vinh-nt/developer-knowledge-base/system-design/best-practices/postgresql-multi-version-docker-wsl/">
+      
+      
+        <link rel="prev" href="../spring-boot-ide-intellij-eclipse-wsl/">
+      
+      
+        <link rel="next" href="../">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>PostgreSQL đa phiên bản trong WSL Ubuntu với Docker - Developer Knowledge Base</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#postgresql-a-phien-ban-trong-wsl-ubuntu-voi-docker" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="Developer Knowledge Base" class="md-header__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Developer Knowledge Base
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              PostgreSQL đa phiên bản trong WSL Ubuntu với Docker
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="deep-purple"  aria-label="Chuyển sang Dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="light-blue"  aria-label="Chuyển sang Light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Chuyển sang Light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Trang chủ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../postgresql/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  PostgreSQL
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../java/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Java
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../spring-boot/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Spring Boot
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../aws/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  AWS
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  System Design
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../standards/agents-governance/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Engineering Standards
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="Developer Knowledge Base" class="md-nav__button md-logo" aria-label="Developer Knowledge Base" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Developer Knowledge Base
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/vinh-nt/developer-knowledge-base" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    vinh-nt/developer-knowledge-base
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trang chủ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../postgresql/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    PostgreSQL
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../postgresql/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/best-practices/jsonb-query-optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tối ưu hóa Truy vấn & Chỉ mục JSONB
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/best-practices/postgresql-b-tree-index-deduplication/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL B-Tree Index Deduplication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/best-practices/postgresql-export-import-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Export/Import Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/explain-analyze/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deep Dive: EXPLAIN ANALYZE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/troubleshooting-locks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting: Lock Contention
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../postgresql/investigations/inv-001-jsonb-tuning/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation: JSONB GIN Tuning
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../java/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Java
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../java/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../java/best-practices/exception-handling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Xử lý Ngoại lệ Chuẩn mực
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../spring-boot/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spring Boot
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Spring Boot
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../spring-boot/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spring-boot/best-practices/resilient-webclient/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cấu hình WebClient Kháng lỗi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-to
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    How-to
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../spring-boot/how-to/cau-hinh-virtual-threads-cho-spring-boot-33/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cấu Hình Virtual Threads Cho Spring Boot 3.3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../aws/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AWS
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    AWS
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../aws/best-practices/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5_2" id="__nav_5_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../aws/best-practices/aurora-s3-export/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Export Aurora PostgreSQL sang S3
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    System Design
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    System Design
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_2" id="__nav_6_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ubuntu Setup
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Ubuntu Setup
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-ubuntu-development-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docker-engine-ubuntu-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Docker Engine
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../jdk-maven-nodejs-npm-ubuntu-setup/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Java, Maven và Node.js
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_3" id="__nav_6_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Advanced Tip
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Advanced Tip
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../vscode-wsl-ubuntu-git-merge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VSCode Remode WSL Ubuntu
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spring-boot-ide-intellij-eclipse-wsl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Spring Boot IDE (IntelliJ / Eclipse WSLg)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL WSL Docker (đa phiên bản)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    PostgreSQL WSL Docker (đa phiên bản)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-kien-truc-va-nguyen-tac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Kiến trúc và nguyên tắc
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ieu-kien-tien-quyet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Điều kiện tiên quyết
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tao-docker-compose-cho-postgresql-161718" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Tạo Docker Compose cho PostgreSQL 16/17/18
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Tạo Docker Compose cho PostgreSQL 16/17/18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#giai-thich-cac-cau-hinh-quan-trong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Giải thích các cấu hình quan trọng
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tao-file-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tạo file .env
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-khoi-ong-va-quan-ly-tung-phien-ban" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Khởi động và quản lý từng phiên bản
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Khởi động và quản lý từng phiên bản">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#khoi-ong-mot-phien-ban" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Khởi động một phiên bản
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#khoi-ong-nhieu-phien-ban-cung-luc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Khởi động nhiều phiên bản cùng lúc
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cac-lenh-thuong-dung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Các lệnh thường dùng
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kiem-tra-postgresql-va-port-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Kiểm tra PostgreSQL và port mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-ket-noi-dbeaver-tren-windows-wsl2-nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Kết nối DBeaver trên Windows (WSL2 NAT)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Kết nối DBeaver trên Windows (WSL2 NAT)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#neu-windows-khong-truy-cap-uoc-nhung-wsl-truy-cap-uoc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nếu Windows không truy cập được nhưng WSL truy cập được
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bang-xu-ly-loi-nhanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bảng xử lý lỗi nhanh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-su-dung-voi-spring-boot-java-trong-wsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Sử dụng với Spring Boot / Java trong WSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Sử dụng với Spring Boot / Java trong WSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-spring-boot-chay-truc-tiep-trong-wsl-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Spring Boot chạy trực tiếp trong WSL Ubuntu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-spring-boot-cung-chay-trong-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Spring Boot cũng chạy trong Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-thao-tac-database-role-va-mat-khau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Thao tác database, role và mật khẩu
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Thao tác database, role và mật khẩu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#oi-password-postgresql-a-co-volume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Đổi password PostgreSQL đã có volume
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-backup-va-restore-ung-cach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Backup và restore đúng cách
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Backup và restore đúng cách">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backup-postgresql-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup PostgreSQL 18
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiem-tra-file-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kiểm tra file backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restore-vao-database-rong-khuyen-nghi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restore vào database rỗng (khuyến nghị)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-database-khac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup database khác
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-toi-uu-tai-nguyen-va-van-hanh-lau-dai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Tối ưu tài nguyên và vận hành lâu dài
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-checklist-trien-khai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Checklist triển khai
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-tai-lieu-tham-khao-chinh-thuc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Tài liệu tham khảo chính thức
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_6_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practices
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_4" id="__nav_6_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Best Practices
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../idempotency-and-resilience/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Thiết kế Idempotency & Phòng vệ Sự cố
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Engineering Standards
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Engineering Standards
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/agents-governance/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agent Governance & Rules
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/unified-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quy Trình Quản Trị Hợp Nhất
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/investigation-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quản Trị Điều Tra (Investigations)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/txt-import-guide/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hướng Dẫn Nhập Ghi Chú TXT
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../standards/theme-evaluation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Kiến trúc & Theme Evaluation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_7_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_7_6" id="__nav_7_6_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Templates
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_7_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Templates
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/knowledge-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Knowledge Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/book-note/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Book Note Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/troubleshooting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Troubleshooting Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How-To Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/code-recipe/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Code Recipe Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/hands-on-lab/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hands-on Lab Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/investigation-raw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Raw Investigation Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/investigation-case/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Investigation Case Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../starter-templates/best-practice/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Best Practice Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-kien-truc-va-nguyen-tac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Kiến trúc và nguyên tắc
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-ieu-kien-tien-quyet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Điều kiện tiên quyết
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-tao-docker-compose-cho-postgresql-161718" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Tạo Docker Compose cho PostgreSQL 16/17/18
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Tạo Docker Compose cho PostgreSQL 16/17/18">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#giai-thich-cac-cau-hinh-quan-trong" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Giải thích các cấu hình quan trọng
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tao-file-env" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tạo file .env
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-khoi-ong-va-quan-ly-tung-phien-ban" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Khởi động và quản lý từng phiên bản
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="4. Khởi động và quản lý từng phiên bản">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#khoi-ong-mot-phien-ban" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Khởi động một phiên bản
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#khoi-ong-nhieu-phien-ban-cung-luc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Khởi động nhiều phiên bản cùng lúc
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cac-lenh-thuong-dung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Các lệnh thường dùng
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-kiem-tra-postgresql-va-port-mapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Kiểm tra PostgreSQL và port mapping
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-ket-noi-dbeaver-tren-windows-wsl2-nat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Kết nối DBeaver trên Windows (WSL2 NAT)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Kết nối DBeaver trên Windows (WSL2 NAT)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#neu-windows-khong-truy-cap-uoc-nhung-wsl-truy-cap-uoc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nếu Windows không truy cập được nhưng WSL truy cập được
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bang-xu-ly-loi-nhanh" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bảng xử lý lỗi nhanh
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-su-dung-voi-spring-boot-java-trong-wsl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Sử dụng với Spring Boot / Java trong WSL
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Sử dụng với Spring Boot / Java trong WSL">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backend-spring-boot-chay-truc-tiep-trong-wsl-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Spring Boot chạy trực tiếp trong WSL Ubuntu
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backend-spring-boot-cung-chay-trong-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backend Spring Boot cũng chạy trong Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-thao-tac-database-role-va-mat-khau" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. Thao tác database, role và mật khẩu
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="8. Thao tác database, role và mật khẩu">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#oi-password-postgresql-a-co-volume" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Đổi password PostgreSQL đã có volume
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-backup-va-restore-ung-cach" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Backup và restore đúng cách
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="9. Backup và restore đúng cách">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#backup-postgresql-18" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup PostgreSQL 18
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kiem-tra-file-backup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kiểm tra file backup
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restore-vao-database-rong-khuyen-nghi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Restore vào database rỗng (khuyến nghị)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backup-database-khac" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backup database khác
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-toi-uu-tai-nguyen-va-van-hanh-lau-dai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. Tối ưu tài nguyên và vận hành lâu dài
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#11-checklist-trien-khai" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. Checklist triển khai
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#12-tai-lieu-tham-khao-chinh-thuc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. Tài liệu tham khảo chính thức
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="postgresql-a-phien-ban-trong-wsl-ubuntu-voi-docker">PostgreSQL đa phiên bản trong WSL Ubuntu với Docker<a class="headerlink" href="#postgresql-a-phien-ban-trong-wsl-ubuntu-voi-docker" title="Permanent link">&para;</a></h1>
+<blockquote>
+<p><strong>Mục tiêu:</strong> Chạy PostgreSQL trong <strong>WSL2 Ubuntu + Docker Engine</strong> để <strong>Windows không phải cài PostgreSQL Server hoặc Docker Desktop</strong>; hỗ trợ đồng thời PostgreSQL <strong>16, 17, 18</strong>, kết nối <strong>DBeaver trên Windows</strong> và các dự án <strong>Spring Boot</strong>.</p>
+<p><strong>Phạm vi:</strong> Môi trường development trên một máy cá nhân, ưu tiên dễ bảo trì, dữ liệu bền vững, hạn chế mở dịch vụ ra mạng ngoài. Ví dụ mạng WSL là <strong>NAT</strong>.</p>
+</blockquote>
+<h2 id="1-kien-truc-va-nguyen-tac">1. Kiến trúc và nguyên tắc<a class="headerlink" href="#1-kien-truc-va-nguyen-tac" title="Permanent link">&para;</a></h2>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Windows 11
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>├── DBeaver / pgAdmin (chỉ là công cụ quản trị DB)
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>│   ├── 127.0.0.1:5436  ───────────┐
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>│   ├── 127.0.0.1:5437  ───────────┤ WSL NAT localhost forwarding
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>│   └── 127.0.0.1:5433  ───────────┘
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>│
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>└── WSL2 Ubuntu
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    ├── Docker Engine + Docker Compose
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    │   ├── postgres16:5432 ← WSL port 5436 ← postgres16_data
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    │   ├── postgres17:5432 ← WSL port 5437 ← postgres17_data
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    │   └── postgres:5432   ← WSL port 5433 ← postgres_data
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    └── Spring Boot / Maven / Java 17
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        └── jdbc:postgresql://127.0.0.1:&lt;HOST_PORT&gt;/app_db
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Thành phần</th>
+<th>Khuyến nghị</th>
+<th>Lý do</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker</td>
+<td>Docker Engine trong WSL Ubuntu</td>
+<td>Không cần Docker Desktop trên Windows</td>
+</tr>
+<tr>
+<td>Quản lý container</td>
+<td>Một <code>compose.yaml</code> + Compose Profiles</td>
+<td>Bật riêng phiên bản cần sử dụng</td>
+</tr>
+<tr>
+<td>Version</td>
+<td><code>postgres:16</code>, <code>postgres:17</code>, <code>postgres:18</code></td>
+<td>Không dùng <code>latest</code>, tránh nâng major ngoài ý muốn</td>
+</tr>
+<tr>
+<td>Storage</td>
+<td>Mỗi major một <strong>Docker Named Volume</strong></td>
+<td>Không trộn data directory giữa các major</td>
+</tr>
+<tr>
+<td>Cổng</td>
+<td>Host khác nhau; bên trong đều <code>5432</code></td>
+<td>Tránh xung đột port</td>
+</tr>
+<tr>
+<td>Network</td>
+<td>Publish <code>127.0.0.1</code></td>
+<td>Hạn chế truy cập từ các interface khác của máy</td>
+</tr>
+<tr>
+<td>Quản trị</td>
+<td>DBeaver cài trên Windows</td>
+<td>Không cần PostgreSQL Server trên Windows</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Nên chạy bao nhiêu phiên bản?</p>
+<p>Chỉ <strong>khởi động phiên bản đang cần</strong>. Mỗi PostgreSQL đang chạy đều dùng RAM và tài nguyên hệ thống. Nếu chỉ cần kiểm thử tự động trên nhiều phiên bản, có thể cân nhắc <strong>Testcontainers</strong> thay vì giữ cả ba container chạy thường trực.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Không dùng chung dữ liệu cho các major version</p>
+<p>PostgreSQL 16/17/18 có định dạng dữ liệu nội bộ riêng. <strong>Không</strong> mount cùng một data directory hoặc tự đổi image từ <code>postgres:17</code> sang <code>postgres:18</code> rồi dùng lại volume cũ. Muốn nâng major phải dùng quy trình migration (<code>pg_upgrade</code> hoặc dump/restore).</p>
+</div>
+<h2 id="2-ieu-kien-tien-quyet">2. Điều kiện tiên quyết<a class="headerlink" href="#2-ieu-kien-tien-quyet" title="Permanent link">&para;</a></h2>
+<p>Hướng dẫn này giả định đã cài <strong>WSL2 Ubuntu, Docker Engine và Docker Compose plugin</strong>. Trong terminal Ubuntu:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>wslinfo<span class="w"> </span>--networking-mode<span class="w">      </span><span class="c1"># Dự kiến: nat</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span>--version
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>docker<span class="w"> </span>compose<span class="w"> </span>version
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>docker<span class="w"> </span>info<span class="w">                    </span><span class="c1"># Xác nhận Docker daemon hoạt động</span>
+</span></code></pre></div>
+<p>Nếu daemon chưa chạy và Ubuntu đã bật <code>systemd</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>docker
+</span></code></pre></div>
+<blockquote>
+<p>Nếu <code>docker info</code> bị lỗi quyền truy cập socket, kiểm tra cấu hình quyền Docker của Ubuntu. Không nên dùng <code>chmod 666 /var/run/docker.sock</code> để khắc phục.</p>
+</blockquote>
+<p>Tạo thư mục trong <strong>filesystem Linux</strong>, không đặt dữ liệu PostgreSQL trực tiếp dưới <code>/mnt/c</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>~/docker/postgres/backups
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nb">cd</span><span class="w"> </span>~/docker/postgres
+</span></code></pre></div>
+<p>Cấu trúc:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>~/docker/postgres/
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── compose.yaml
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>├── .env
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>├── .gitignore
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>└── backups/
+</span></code></pre></div>
+<h2 id="3-tao-docker-compose-cho-postgresql-161718">3. Tạo Docker Compose cho PostgreSQL 16/17/18<a class="headerlink" href="#3-tao-docker-compose-cho-postgresql-161718" title="Permanent link">&para;</a></h2>
+<p>Tạo <code>~/docker/postgres/compose.yaml</code>:</p>
+<div class="language-yaml highlight"><span class="filename">compose.yaml</span><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">x-postgres-common</span><span class="p">:</span><span class="w"> </span><span class="nl">&amp;postgres-common</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;no&quot;</span><span class="w">                 </span><span class="c1"># Chỉ bật phiên bản cần dùng khi phát triển</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="nt">shm_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">256mb</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="nt">healthcheck</span><span class="p">:</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span><span class="nt">test</span><span class="p">:</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CMD-SHELL</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pg_isready -U &quot;$${POSTGRES_USER}&quot; -d &quot;$${POSTGRES_DB}&quot;</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span><span class="nt">interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="nt">start_period</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10s</span>
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="nt">services</span><span class="p">:</span>
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">  </span><span class="nt">postgres16</span><span class="p">:</span>
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span><span class="nt">&lt;&lt;</span><span class="p">:</span><span class="w"> </span><span class="nv">*postgres-common</span>
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:16</span>
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres16-dev</span>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="w">    </span><span class="nt">profiles</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">pg16</span><span class="p p-Indicator">]</span>
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_USER:?required}</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD_16:?required}</span>
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_DB:?required}</span>
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-5-24"><a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;127.0.0.1:5436:5432&quot;</span><span class="w">    </span><span class="c1"># HOST:CONTAINER</span>
+</span><span id="__span-5-25"><a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-5-26"><a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres16_data:/var/lib/postgresql/data</span>
+</span><span id="__span-5-27"><a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>
+</span><span id="__span-5-28"><a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">  </span><span class="nt">postgres17</span><span class="p">:</span>
+</span><span id="__span-5-29"><a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="w">    </span><span class="nt">&lt;&lt;</span><span class="p">:</span><span class="w"> </span><span class="nv">*postgres-common</span>
+</span><span id="__span-5-30"><a id="__codelineno-5-30" name="__codelineno-5-30" href="#__codelineno-5-30"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:17</span>
+</span><span id="__span-5-31"><a id="__codelineno-5-31" name="__codelineno-5-31" href="#__codelineno-5-31"></a><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres17-dev</span>
+</span><span id="__span-5-32"><a id="__codelineno-5-32" name="__codelineno-5-32" href="#__codelineno-5-32"></a><span class="w">    </span><span class="nt">profiles</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">pg17</span><span class="p p-Indicator">]</span>
+</span><span id="__span-5-33"><a id="__codelineno-5-33" name="__codelineno-5-33" href="#__codelineno-5-33"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-5-34"><a id="__codelineno-5-34" name="__codelineno-5-34" href="#__codelineno-5-34"></a><span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_USER:?required}</span>
+</span><span id="__span-5-35"><a id="__codelineno-5-35" name="__codelineno-5-35" href="#__codelineno-5-35"></a><span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD_17:?required}</span>
+</span><span id="__span-5-36"><a id="__codelineno-5-36" name="__codelineno-5-36" href="#__codelineno-5-36"></a><span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_DB:?required}</span>
+</span><span id="__span-5-37"><a id="__codelineno-5-37" name="__codelineno-5-37" href="#__codelineno-5-37"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-5-38"><a id="__codelineno-5-38" name="__codelineno-5-38" href="#__codelineno-5-38"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;127.0.0.1:5437:5432&quot;</span>
+</span><span id="__span-5-39"><a id="__codelineno-5-39" name="__codelineno-5-39" href="#__codelineno-5-39"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-5-40"><a id="__codelineno-5-40" name="__codelineno-5-40" href="#__codelineno-5-40"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres17_data:/var/lib/postgresql/data</span>
+</span><span id="__span-5-41"><a id="__codelineno-5-41" name="__codelineno-5-41" href="#__codelineno-5-41"></a>
+</span><span id="__span-5-42"><a id="__codelineno-5-42" name="__codelineno-5-42" href="#__codelineno-5-42"></a><span class="w">  </span><span class="nt">postgres</span><span class="p">:</span>
+</span><span id="__span-5-43"><a id="__codelineno-5-43" name="__codelineno-5-43" href="#__codelineno-5-43"></a><span class="w">    </span><span class="nt">&lt;&lt;</span><span class="p">:</span><span class="w"> </span><span class="nv">*postgres-common</span>
+</span><span id="__span-5-44"><a id="__codelineno-5-44" name="__codelineno-5-44" href="#__codelineno-5-44"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres:18</span>
+</span><span id="__span-5-45"><a id="__codelineno-5-45" name="__codelineno-5-45" href="#__codelineno-5-45"></a><span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres-dev</span>
+</span><span id="__span-5-46"><a id="__codelineno-5-46" name="__codelineno-5-46" href="#__codelineno-5-46"></a><span class="w">    </span><span class="nt">profiles</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">pg18</span><span class="p p-Indicator">]</span>
+</span><span id="__span-5-47"><a id="__codelineno-5-47" name="__codelineno-5-47" href="#__codelineno-5-47"></a><span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+</span><span id="__span-5-48"><a id="__codelineno-5-48" name="__codelineno-5-48" href="#__codelineno-5-48"></a><span class="w">      </span><span class="nt">POSTGRES_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_USER:?required}</span>
+</span><span id="__span-5-49"><a id="__codelineno-5-49" name="__codelineno-5-49" href="#__codelineno-5-49"></a><span class="w">      </span><span class="nt">POSTGRES_PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_PASSWORD_18:?required}</span>
+</span><span id="__span-5-50"><a id="__codelineno-5-50" name="__codelineno-5-50" href="#__codelineno-5-50"></a><span class="w">      </span><span class="nt">POSTGRES_DB</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${POSTGRES_DB:?required}</span>
+</span><span id="__span-5-51"><a id="__codelineno-5-51" name="__codelineno-5-51" href="#__codelineno-5-51"></a><span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+</span><span id="__span-5-52"><a id="__codelineno-5-52" name="__codelineno-5-52" href="#__codelineno-5-52"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;127.0.0.1:5433:5432&quot;</span>
+</span><span id="__span-5-53"><a id="__codelineno-5-53" name="__codelineno-5-53" href="#__codelineno-5-53"></a><span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-5-54"><a id="__codelineno-5-54" name="__codelineno-5-54" href="#__codelineno-5-54"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">postgres_data:/var/lib/postgresql</span>
+</span><span id="__span-5-55"><a id="__codelineno-5-55" name="__codelineno-5-55" href="#__codelineno-5-55"></a>
+</span><span id="__span-5-56"><a id="__codelineno-5-56" name="__codelineno-5-56" href="#__codelineno-5-56"></a><span class="nt">volumes</span><span class="p">:</span>
+</span><span id="__span-5-57"><a id="__codelineno-5-57" name="__codelineno-5-57" href="#__codelineno-5-57"></a><span class="w">  </span><span class="nt">postgres16_data</span><span class="p">:</span>
+</span><span id="__span-5-58"><a id="__codelineno-5-58" name="__codelineno-5-58" href="#__codelineno-5-58"></a><span class="w">  </span><span class="nt">postgres17_data</span><span class="p">:</span>
+</span><span id="__span-5-59"><a id="__codelineno-5-59" name="__codelineno-5-59" href="#__codelineno-5-59"></a><span class="w">  </span><span class="nt">postgres_data</span><span class="p">:</span>
+</span></code></pre></div>
+<h3 id="giai-thich-cac-cau-hinh-quan-trong">Giải thích các cấu hình quan trọng<a class="headerlink" href="#giai-thich-cac-cau-hinh-quan-trong" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>profiles: [pg16]</code>, <code>[pg17]</code>, <code>[pg18]</code>: Chỉ khởi động những phiên bản được chọn; có thể target service trực tiếp.</li>
+<li><code>restart: "no"</code>: Không tự khởi động các DB ít sử dụng khi Docker daemon chạy. Với bản dùng thường xuyên, có thể đổi riêng service đó sang <code>unless-stopped</code>.</li>
+<li><code>127.0.0.1:5433:5432</code>: <strong>cổng host WSL <code>5433</code> → cổng container <code>5432</code></strong>. Thứ tự là <code>IP_HOST:HOST_PORT:CONTAINER_PORT</code>.</li>
+<li><code>volumes</code>: Dữ liệu tách biệt, <strong>không mất khi recreate container</strong> nếu volume được giữ nguyên.</li>
+<li><code>shm_size</code>: Tăng kích thước <code>/dev/shm</code> so với mức Docker mặc định. Không có nghĩa PostgreSQL tự được cấp 256 MB RAM cố định.</li>
+<li><code>healthcheck</code>: Kiểm tra server sẵn sàng chấp nhận kết nối; <strong>không thay thế kiểm tra username/password thật</strong>.</li>
+<li>YAML anchor <code>&amp;postgres-common</code> và alias <code>*postgres-common</code>: Tránh lặp cấu hình chung.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Đường dẫn volume thay đổi từ PostgreSQL 18</p>
+<ul>
+<li><strong>PostgreSQL 16/17:</strong> mount <code>/var/lib/postgresql/data</code>.</li>
+<li><strong>PostgreSQL 18:</strong> mount <code>/var/lib/postgresql</code> (PGDATA mặc định ở dưới <code>/var/lib/postgresql/18/docker</code>).</li>
+</ul>
+<p>Đây là thay đổi của <strong>PostgreSQL Official Docker Image</strong>. Mount sai có thể khiến dữ liệu thực tế rơi vào anonymous volume và không được giữ đúng như mong đợi.</p>
+</div>
+<h3 id="tao-file-env">Tạo file <code>.env</code><a class="headerlink" href="#tao-file-env" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><span class="filename">.env</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>POSTGRES_USER=postgres
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>POSTGRES_DB=app_db
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>POSTGRES_PASSWORD_16=REPLACE_WITH_STRONG_PASSWORD_16
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>POSTGRES_PASSWORD_17=REPLACE_WITH_STRONG_PASSWORD_17
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>POSTGRES_PASSWORD_18=REPLACE_WITH_STRONG_PASSWORD_18
+</span></code></pre></div>
+<p>Tạo từng mật khẩu mạnh rồi thay các giá trị ví dụ:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">24</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>.env
+</span></code></pre></div>
+<p>Tạo <code>.gitignore</code>:</p>
+<div class="language-text highlight"><span class="filename">.gitignore</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>.env
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>backups/
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Bảo mật</p>
+<p>Không commit <code>.env</code> chứa mật khẩu thật lên Git. Biến môi trường trong Docker phục vụ <strong>development</strong>; người có quyền truy cập Docker thường có thể xem cấu hình container. Trong môi trường nhạy cảm cần dùng secret manager/phương thức quản lý credentials phù hợp.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Nếu đã có PostgreSQL 18 từ lần cài trước</p>
+<p>Nếu đang sử dụng volume cũ chứa dữ liệu, <strong>giữ nguyên thư mục Compose và tên volume thực tế</strong>. Việc đổi thư mục project, đổi tên volume, hoặc đổi từ khóa đặt tên của Compose có thể tạo <strong>volume mới trống</strong> làm bạn tưởng dữ liệu đã mất.</p>
+<p>Cấu hình mới dùng <code>POSTGRES_PASSWORD_18</code> thay cho <code>POSTGRES_PASSWORD</code>. Với <strong>volume đã có dữ liệu</strong>, biến này <strong>không đổi password trong database</strong>. Có thể đặt giá trị mới trong <code>.env</code> cho đúng mật khẩu hiện hành, hoặc thay đổi password bằng <code>psql</code> sau khi xác nhận kết nối.</p>
+</div>
+<h2 id="4-khoi-ong-va-quan-ly-tung-phien-ban">4. Khởi động và quản lý từng phiên bản<a class="headerlink" href="#4-khoi-ong-va-quan-ly-tung-phien-ban" title="Permanent link">&para;</a></h2>
+<p>Kiểm tra cấu hình trước khi chạy:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nb">cd</span><span class="w"> </span>~/docker/postgres
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>config<span class="w"> </span>--quiet
+</span></code></pre></div>
+<h3 id="khoi-ong-mot-phien-ban">Khởi động một phiên bản<a class="headerlink" href="#khoi-ong-mot-phien-ban" title="Permanent link">&para;</a></h3>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">PostgreSQL 16</label><label for="__tabbed_1_2">PostgreSQL 17</label><label for="__tabbed_1_3">PostgreSQL 18</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>postgres16
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>postgres17
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>postgres
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>Có thể dùng profile tương đương:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>--profile<span class="w"> </span>pg18<span class="w"> </span>up<span class="w"> </span>-d
+</span></code></pre></div>
+<h3 id="khoi-ong-nhieu-phien-ban-cung-luc">Khởi động nhiều phiên bản cùng lúc<a class="headerlink" href="#khoi-ong-nhieu-phien-ban-cung-luc" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="w">  </span>--profile<span class="w"> </span>pg16<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="w">  </span>--profile<span class="w"> </span>pg17<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a><span class="w">  </span>--profile<span class="w"> </span>pg18<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-14-5"><a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a><span class="w">  </span>up<span class="w"> </span>-d
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Profiles không tự dừng service trước đó</p>
+<p>Nếu đang chạy PostgreSQL 16 và bật profile 18 thì PostgreSQL 16 <strong>không tự dừng</strong>. Muốn tiết kiệm RAM, chủ động <code>stop</code> bản không dùng.</p>
+</div>
+<h3 id="cac-lenh-thuong-dung">Các lệnh thường dùng<a class="headerlink" href="#cac-lenh-thuong-dung" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Tác vụ</th>
+<th>Lệnh (ví dụ PostgreSQL 18)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Khởi động</td>
+<td><code>docker compose up -d postgres</code></td>
+</tr>
+<tr>
+<td>Dừng</td>
+<td><code>docker compose stop postgres</code></td>
+</tr>
+<tr>
+<td>Chạy lại container đã dừng</td>
+<td><code>docker compose start postgres</code></td>
+</tr>
+<tr>
+<td>Restart</td>
+<td><code>docker compose restart postgres</code></td>
+</tr>
+<tr>
+<td>Xem container</td>
+<td><code>docker ps -a --filter name=postgres</code></td>
+</tr>
+<tr>
+<td>Xem log</td>
+<td><code>docker compose logs -f postgres</code></td>
+</tr>
+<tr>
+<td>Kiểm tra tài nguyên</td>
+<td><code>docker stats postgres-dev</code></td>
+</tr>
+<tr>
+<td>Xem port thực tế</td>
+<td><code>docker port postgres-dev</code></td>
+</tr>
+<tr>
+<td>Vào psql</td>
+<td><code>docker compose exec postgres psql -U postgres -d app_db</code></td>
+</tr>
+<tr>
+<td>Xóa container, giữ volume</td>
+<td><code>docker compose down</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition danger">
+<p class="admonition-title">Tuyệt đối cẩn thận với <code>down -v</code></p>
+<p><code>docker compose down -v</code> có thể <strong>xóa các named volume do Compose quản lý và toàn bộ dữ liệu tương ứng</strong>. Không dùng trong quá trình vận hành thông thường.</p>
+</div>
+<h2 id="5-kiem-tra-postgresql-va-port-mapping">5. Kiểm tra PostgreSQL và port mapping<a class="headerlink" href="#5-kiem-tra-postgresql-va-port-mapping" title="Permanent link">&para;</a></h2>
+<p>Ví dụ PostgreSQL 18 dùng host port <strong>5433</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="c1"># Trong WSL Ubuntu</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>docker<span class="w"> </span>ps<span class="w"> </span>--filter<span class="w"> </span><span class="nv">name</span><span class="o">=</span>postgres-dev
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>docker<span class="w"> </span>port<span class="w"> </span>postgres-dev
+</span></code></pre></div>
+<p>Kết quả mong đợi:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>5432/tcp -&gt; 127.0.0.1:5433
+</span></code></pre></div>
+<p><strong>Phân biệt quan trọng:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>127.0.0.1:5433-&gt;5432/tcp     # ĐÚNG: host 5433 → container 5432
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>127.0.0.1:5432-&gt;5433/tcp     # SAI khi PostgreSQL container nghe 5432
+</span></code></pre></div>
+<p>Xem cổng mà PostgreSQL thực sự lắng nghe bên trong container:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>postgres-dev<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>app_db<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SHOW port;&quot;</span>
+</span></code></pre></div>
+<p>Kết quả thông thường là <code>5432</code>.</p>
+<p>Kiểm tra <strong>TCP từ Ubuntu tới host-published port</strong>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>nc<span class="w"> </span>-vz<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span><span class="m">5433</span>
+</span></code></pre></div>
+<p>Nếu chưa có <code>nc</code>: <code>sudo apt-get update &amp;&amp; sudo apt-get install -y netcat-openbsd</code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Đổi port không cần xóa volume</p>
+<p>Sau khi sửa <code>ports:</code> trong <code>compose.yaml</code>, áp dụng bằng:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--force-recreate<span class="w"> </span>postgres
+</span></code></pre></div>
+<p>Container được tạo lại nhưng named volume vẫn giữ nguyên. Kiểm tra bằng <code>docker port postgres-dev</code>.</p>
+</div>
+<h2 id="6-ket-noi-dbeaver-tren-windows-wsl2-nat">6. Kết nối DBeaver trên Windows (WSL2 NAT)<a class="headerlink" href="#6-ket-noi-dbeaver-tren-windows-wsl2-nat" title="Permanent link">&para;</a></h2>
+<p>DBeaver <strong>chạy trên Windows</strong>, PostgreSQL Server <strong>chạy trong Docker của WSL</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>PostgreSQL</th>
+<th>Host</th>
+<th style="text-align: right;">Port</th>
+<th>Database</th>
+<th>User</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>16</td>
+<td><code>127.0.0.1</code></td>
+<td style="text-align: right;"><code>5436</code></td>
+<td><code>app_db</code></td>
+<td><code>postgres</code></td>
+</tr>
+<tr>
+<td>17</td>
+<td><code>127.0.0.1</code></td>
+<td style="text-align: right;"><code>5437</code></td>
+<td><code>app_db</code></td>
+<td><code>postgres</code></td>
+</tr>
+<tr>
+<td>18</td>
+<td><code>127.0.0.1</code></td>
+<td style="text-align: right;"><code>5433</code></td>
+<td><code>app_db</code></td>
+<td><code>postgres</code></td>
+</tr>
+</tbody>
+</table>
+<p>Trong <strong>DBeaver → New Database Connection → PostgreSQL</strong>:</p>
+<ol>
+<li>Host: <code>127.0.0.1</code>.</li>
+<li>Port: <code>5433</code> (nếu dùng PostgreSQL 18).</li>
+<li>Database: <code>app_db</code>.</li>
+<li>Username: <code>postgres</code>; Password: mật khẩu thực tế <strong>đang lưu trong DB</strong>.</li>
+<li>Chọn <strong>Test Connection</strong>.</li>
+</ol>
+<p>Trước khi kiểm tra trong DBeaver, mở <strong>Windows PowerShell</strong>:</p>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nb">Test-NetConnection</span> <span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="n">-Port</span> <span class="n">5433</span>
+</span></code></pre></div>
+<ul>
+<li><code>TcpTestSucceeded : True</code>: Windows đã truy cập được tới cổng TCP; tiếp tục kiểm tra tài khoản, DB name, SSL/authentication trong DBeaver.</li>
+<li><code>TcpTestSucceeded : False</code>: <strong>chưa tới bước xác thực PostgreSQL</strong>; kiểm tra Docker port mapping và đường kết nối Windows ↔ WSL.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">WSL NAT và localhost forwarding</p>
+<p>Theo Microsoft, WSL2 NAT mặc định hỗ trợ Windows truy cập Linux server qua <code>localhost</code>. Tuy nhiên, tùy phiên bản WSL và cách Docker publish cổng, có thể xảy ra trường hợp <strong>TCP trong WSL thành công nhưng Windows thất bại</strong>. Không kết luận ngay lỗi do password hoặc DBeaver.</p>
+</div>
+<h3 id="neu-windows-khong-truy-cap-uoc-nhung-wsl-truy-cap-uoc">Nếu Windows không truy cập được nhưng WSL truy cập được<a class="headerlink" href="#neu-windows-khong-truy-cap-uoc-nhung-wsl-truy-cap-uoc" title="Permanent link">&para;</a></h3>
+<p>Thực hiện <strong>theo thứ tự</strong>, chưa vội tắt firewall hoặc mở port ra LAN:</p>
+<p><strong>Bước 1 – kiểm tra port publish:</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># WSL</span>
+</span><span id="__span-22-2"><a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>docker<span class="w"> </span>port<span class="w"> </span>postgres-dev
+</span><span id="__span-22-3"><a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>nc<span class="w"> </span>-vz<span class="w"> </span><span class="m">127</span>.0.0.1<span class="w"> </span><span class="m">5433</span>
+</span></code></pre></div>
+<p><strong>Bước 2 – kiểm tra port trên Windows:</strong></p>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c"># Windows PowerShell</span>
+</span><span id="__span-23-2"><a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="nb">Test-NetConnection</span> <span class="n">127</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">0</span><span class="p">.</span><span class="n">1</span> <span class="n">-Port</span> <span class="n">5433</span>
+</span><span id="__span-23-3"><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="nb">Get-NetTCPConnection</span> <span class="n">-LocalPort</span> <span class="n">5433</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span>
+</span></code></pre></div>
+<p>Lệnh thứ hai giúp kiểm tra port đã bị tiến trình khác chiếm trên Windows hay chưa; kết quả rỗng không tự nó chứng minh WSL forwarding hỏng.</p>
+<p><strong>Bước 3 – kiểm tra <code>.wslconfig</code> (trên Windows):</strong></p>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">notepad</span> <span class="nv">$env:USERPROFILE</span><span class="p">\.</span><span class="n">wslconfig</span>
+</span></code></pre></div>
+<p>Nội dung liên quan:</p>
+<div class="language-ini highlight"><span class="filename">%USERPROFILE%\.wslconfig</span><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="k">[wsl2]</span>
+</span><span id="__span-25-2"><a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="na">networkingMode</span><span class="o">=</span><span class="s">nat</span>
+</span><span id="__span-25-3"><a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="na">localhostForwarding</span><span class="o">=</span><span class="s">true</span>
+</span></code></pre></div>
+<p><code>localhostForwarding</code> mặc định là <code>true</code>; chỉ cần khai báo nếu bạn muốn quản lý tường minh. <strong>Giữ các cấu hình WSL khác đang dùng</strong>, không thay thế toàn bộ file chỉ bằng hai dòng trên.</p>
+<p>Nếu đã sửa <code>.wslconfig</code>, đóng ứng dụng WSL đang chạy rồi từ PowerShell:</p>
+<div class="language-powershell highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">wsl</span> <span class="p">-</span><span class="n">-shutdown</span>
+</span></code></pre></div>
+<p>Mở lại Ubuntu và bật PostgreSQL:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="nb">cd</span><span class="w"> </span>~/docker/postgres
+</span><span id="__span-27-2"><a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>postgres
+</span></code></pre></div>
+<p><strong>Bước 4 – nếu vẫn thất bại:</strong></p>
+<ul>
+<li>Kiểm tra <code>docker info</code>, <code>docker ps</code>, Docker daemon và trạng thái WSL.</li>
+<li>Kiểm tra sự trùng port với dịch vụ PostgreSQL/ứng dụng khác trên Windows.</li>
+<li>Nếu buộc phải kết nối qua <strong>WSL IP</strong> thay cho localhost, phải kiểm tra lại Docker bind address, đường đi mạng và firewall. <strong>Không tự đổi thành <code>0.0.0.0</code> hoặc dùng <code>netsh portproxy</code> như giải pháp đầu tiên</strong>, vì có thể mở dịch vụ DB ngoài ý muốn.</li>
+</ul>
+<h3 id="bang-xu-ly-loi-nhanh">Bảng xử lý lỗi nhanh<a class="headerlink" href="#bang-xu-ly-loi-nhanh" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Hiện tượng</th>
+<th>Nguyên nhân cần kiểm tra</th>
+<th>Hướng xử lý</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TcpTestSucceeded: False</code></td>
+<td>Sai host port, Docker chưa publish, WSL forwarding</td>
+<td><code>docker port</code>, kiểm tra TCP trong WSL, <code>.wslconfig</code></td>
+</tr>
+<tr>
+<td><code>Connection refused</code></td>
+<td>Không có server lắng nghe tại địa chỉ/port đã chọn</td>
+<td>Kiểm tra container, port mapping</td>
+</tr>
+<tr>
+<td><code>Connection timed out</code></td>
+<td>Đường mạng/firewall không chuyển gói đến đích</td>
+<td>Kiểm tra WSL/Windows network và firewall</td>
+</tr>
+<tr>
+<td><code>password authentication failed</code></td>
+<td>Sai mật khẩu thực tế trong DB</td>
+<td>Kiểm tra password khởi tạo, đổi mật khẩu qua <code>psql</code></td>
+</tr>
+<tr>
+<td><code>database ... does not exist</code></td>
+<td>Sai tên DB hoặc DB chưa được tạo</td>
+<td><code>psql -l</code>; tạo DB đúng server</td>
+</tr>
+<tr>
+<td>Có DB nhưng dữ liệu "biến mất" sau recreate</td>
+<td>Compose project/volume name thay đổi</td>
+<td><code>docker volume ls</code>, <code>docker inspect</code>, rà soát tên volume</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-su-dung-voi-spring-boot-java-trong-wsl">7. Sử dụng với Spring Boot / Java trong WSL<a class="headerlink" href="#7-su-dung-voi-spring-boot-java-trong-wsl" title="Permanent link">&para;</a></h2>
+<h3 id="backend-spring-boot-chay-truc-tiep-trong-wsl-ubuntu">Backend Spring Boot chạy trực tiếp trong WSL Ubuntu<a class="headerlink" href="#backend-spring-boot-chay-truc-tiep-trong-wsl-ubuntu" title="Permanent link">&para;</a></h3>
+<p>Dùng <strong>host port</strong> đã publish:</p>
+<div class="language-yaml highlight"><span class="filename">application-local.yml</span><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="nt">spring</span><span class="p">:</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="w">  </span><span class="nt">datasource</span><span class="p">:</span>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">    </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jdbc:postgresql://127.0.0.1:5433/app_db</span>
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DB_USERNAME:app_user}</span>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${DB_PASSWORD}</span>
+</span><span id="__span-28-6"><a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="w">    </span><span class="nt">driver-class-name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">org.postgresql.Driver</span>
+</span></code></pre></div>
+<ul>
+<li>PostgreSQL 16: thay <code>5433</code> bằng <code>5436</code>.</li>
+<li>PostgreSQL 17: thay <code>5433</code> bằng <code>5437</code>.</li>
+<li>PostgreSQL 18: giữ <code>5433</code>.</li>
+<li>Thêm dependency PostgreSQL JDBC Driver qua Maven/Gradle nếu dự án chưa có.</li>
+<li>Tránh đưa password thật vào Git; inject qua environment variables / secrets.</li>
+</ul>
+<h3 id="backend-spring-boot-cung-chay-trong-docker">Backend Spring Boot cũng chạy trong Docker<a class="headerlink" href="#backend-spring-boot-cung-chay-trong-docker" title="Permanent link">&para;</a></h3>
+<p>Nếu container Spring Boot <strong>cùng Compose network</strong> với PostgreSQL 18, dùng <strong>service name và container port</strong>:</p>
+<div class="language-properties highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="na">spring.datasource.url</span><span class="o">=</span><span class="s">jdbc:postgresql://postgres:5432/app_db</span>
+</span></code></pre></div>
+<p>Tương tự PostgreSQL 16 dùng <code>postgres16:5432</code>; PostgreSQL 17 dùng <code>postgres17:5432</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Không dùng <code>localhost</code> trong container Spring Boot để trỏ sang DB container khác</p>
+<p><code>localhost</code> trong container Spring Boot chỉ trỏ về <strong>chính container Spring Boot</strong>. Nếu hai ứng dụng ở <strong>hai Compose project khác nhau</strong>, chúng không mặc nhiên dùng cùng Docker network; cần cấu hình shared network trước khi sử dụng tên service của nhau.</p>
+</div>
+<h2 id="8-thao-tac-database-role-va-mat-khau">8. Thao tác database, role và mật khẩu<a class="headerlink" href="#8-thao-tac-database-role-va-mat-khau" title="Permanent link">&para;</a></h2>
+<p>Truy cập PostgreSQL 18 từ Ubuntu:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>app_db
+</span></code></pre></div>
+<p>Các lệnh <code>psql</code> hữu ích:</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="err">\</span><span class="n">conninfo</span>
+</span><span id="__span-31-2"><a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="err">\</span><span class="n">l</span>
+</span><span id="__span-31-3"><a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="err">\</span><span class="n">du</span>
+</span><span id="__span-31-4"><a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="err">\</span><span class="n">dn</span>
+</span><span id="__span-31-5"><a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="err">\</span><span class="n">dt</span>
+</span><span id="__span-31-6"><a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="k">SELECT</span><span class="w"> </span><span class="k">version</span><span class="p">();</span>
+</span><span id="__span-31-7"><a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="k">SHOW</span><span class="w"> </span><span class="n">port</span><span class="p">;</span>
+</span><span id="__span-31-8"><a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="err">\</span><span class="n">q</span>
+</span></code></pre></div>
+<p>Tạo role cho ứng dụng (ví dụ ứng dụng cần quản lý schema qua Flyway/Liquibase):</p>
+<div class="language-sql highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">ROLE</span><span class="w"> </span><span class="n">app_user</span><span class="w"> </span><span class="n">LOGIN</span><span class="p">;</span>
+</span><span id="__span-32-2"><a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="k">GRANT</span><span class="w"> </span><span class="k">CONNECT</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">app_db</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">app_user</span><span class="p">;</span>
+</span><span id="__span-32-3"><a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="k">GRANT</span><span class="w"> </span><span class="k">USAGE</span><span class="p">,</span><span class="w"> </span><span class="k">CREATE</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="k">SCHEMA</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="n">app_user</span><span class="p">;</span>
+</span></code></pre></div>
+<p>Đặt mật khẩu tương tác trong <code>psql</code> (không ghi thẳng password vào lịch sử câu lệnh):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a>\password app_user
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Phân quyền</p>
+<p>Ví dụ trên phù hợp khi role ứng dụng cần tạo bảng trong schema <code>public</code> của <strong>DB hiện tại</strong>. Nếu bảng đã tồn tại và thuộc role khác, cần cấp quyền trên bảng/sequence tương ứng. Với production, nên tách <strong>migration role</strong> (DDL) và <strong>runtime role</strong> (DML) theo nguyên tắc least privilege.</p>
+</div>
+<h3 id="oi-password-postgresql-a-co-volume">Đổi password PostgreSQL đã có volume<a class="headerlink" href="#oi-password-postgresql-a-co-volume" title="Permanent link">&para;</a></h3>
+<p>Thay <code>.env</code> <strong>không tự đổi mật khẩu</strong> trong database đã được khởi tạo. Muốn đổi tài khoản quản trị:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>postgres<span class="w"> </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>postgres
+</span></code></pre></div>
+<p>Trong <code>psql</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a>\password postgres
+</span></code></pre></div>
+<p>Sau đó cập nhật mật khẩu tương ứng trong <code>.env</code>/DBeaver/app để không bị lệch. Với kết nối remote, mật khẩu được yêu cầu theo cấu hình authentication hiện hành; việc <code>psql</code> chạy được <strong>ngay trong container</strong> chưa chứng minh mật khẩu kết nối từ DBeaver là đúng.</p>
+<h2 id="9-backup-va-restore-ung-cach">9. Backup và restore đúng cách<a class="headerlink" href="#9-backup-va-restore-ung-cach" title="Permanent link">&para;</a></h2>
+<p>Named Volume giúp data tồn tại qua <strong>container recreate</strong>, nhưng <strong>không thay thế backup</strong>. Nên chép backup quan trọng ra khỏi WSL virtual disk, ví dụ sang một ổ lưu trữ khác sau khi xuất.</p>
+<h3 id="backup-postgresql-18">Backup PostgreSQL 18<a class="headerlink" href="#backup-postgresql-18" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-36-1"><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="nb">cd</span><span class="w"> </span>~/docker/postgres
+</span><span id="__span-36-2"><a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a>mkdir<span class="w"> </span>-p<span class="w"> </span>backups
+</span><span id="__span-36-3"><a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a>
+</span><span id="__span-36-4"><a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-36-5"><a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="w">  </span>pg_dump<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>app_db<span class="w"> </span>-Fc<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-36-6"><a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="w">  </span>&gt;<span class="w"> </span><span class="s2">&quot;backups/app_db_pg18_</span><span class="k">$(</span>date<span class="w"> </span>+%F_%H%M%S<span class="k">)</span><span class="s2">.dump&quot;</span>
+</span></code></pre></div>
+<ul>
+<li><code>-Fc</code>: PostgreSQL custom archive, hỗ trợ <code>pg_restore</code>.</li>
+<li><code>-T</code>: Tắt pseudo-TTY, phù hợp khi redirect ra file binary.</li>
+<li><code>pg_dump</code> backup <strong>một database</strong>, không bao gồm toàn bộ role/global objects của PostgreSQL cluster.</li>
+</ul>
+<h3 id="kiem-tra-file-backup">Kiểm tra file backup<a class="headerlink" href="#kiem-tra-file-backup" title="Permanent link">&para;</a></h3>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-37-1"><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a>ls<span class="w"> </span>-lh<span class="w"> </span>backups/
+</span><span id="__span-37-2"><a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>pg_restore<span class="w"> </span>--list<span class="w"> </span>backups/app_db_pg18_YYYY-MM-DD_HHMMSS.dump<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
+<p>Nếu Ubuntu không có <code>pg_restore</code> cục bộ, dùng:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-38-1"><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span>pg_restore<span class="w"> </span>--list<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-38-2"><a id="__codelineno-38-2" name="__codelineno-38-2" href="#__codelineno-38-2"></a><span class="w">  </span>&lt;<span class="w"> </span>backups/app_db_pg18_YYYY-MM-DD_HHMMSS.dump<span class="w"> </span><span class="p">|</span><span class="w"> </span>head
+</span></code></pre></div>
+<h3 id="restore-vao-database-rong-khuyen-nghi">Restore vào database rỗng (khuyến nghị)<a class="headerlink" href="#restore-vao-database-rong-khuyen-nghi" title="Permanent link">&para;</a></h3>
+<p>Tạo trước một DB mới, ví dụ <code>app_db_restore</code>:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-39-1"><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-39-2"><a id="__codelineno-39-2" name="__codelineno-39-2" href="#__codelineno-39-2"></a><span class="w">  </span>psql<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-39-3"><a id="__codelineno-39-3" name="__codelineno-39-3" href="#__codelineno-39-3"></a><span class="w">  </span>-c<span class="w"> </span><span class="s1">&#39;CREATE DATABASE app_db_restore;&#39;</span>
+</span></code></pre></div>
+<p>Restore:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-40-1"><a id="__codelineno-40-1" name="__codelineno-40-1" href="#__codelineno-40-1"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-40-2"><a id="__codelineno-40-2" name="__codelineno-40-2" href="#__codelineno-40-2"></a><span class="w">  </span>pg_restore<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>app_db_restore<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-40-3"><a id="__codelineno-40-3" name="__codelineno-40-3" href="#__codelineno-40-3"></a><span class="w">  </span>--no-owner<span class="w"> </span>--no-acl<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-40-4"><a id="__codelineno-40-4" name="__codelineno-40-4" href="#__codelineno-40-4"></a><span class="w">  </span>&lt;<span class="w"> </span>backups/app_db_pg18_YYYY-MM-DD_HHMMSS.dump
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Không restore nhầm database</p>
+<p>Restore có thể tạo/ghi đè đối tượng và thất bại khi object đã tồn tại. Luôn xác nhận đúng <strong>server, version, database</strong> trước khi chạy. Không tùy tiện dùng <code>--clean</code> trên DB có dữ liệu quan trọng.</p>
+</div>
+<h3 id="backup-database-khac">Backup database khác<a class="headerlink" href="#backup-database-khac" title="Permanent link">&para;</a></h3>
+<p>Thay <code>postgres</code> (service name) và cổng theo phiên bản:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-41-1"><a id="__codelineno-41-1" name="__codelineno-41-1" href="#__codelineno-41-1"></a><span class="c1"># PostgreSQL 17</span>
+</span><span id="__span-41-2"><a id="__codelineno-41-2" name="__codelineno-41-2" href="#__codelineno-41-2"></a><span class="c1"># Sử dụng service postgres17 và database app_db</span>
+</span><span id="__span-41-3"><a id="__codelineno-41-3" name="__codelineno-41-3" href="#__codelineno-41-3"></a>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-T<span class="w"> </span>postgres17<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-41-4"><a id="__codelineno-41-4" name="__codelineno-41-4" href="#__codelineno-41-4"></a><span class="w">  </span>pg_dump<span class="w"> </span>-U<span class="w"> </span>postgres<span class="w"> </span>-d<span class="w"> </span>app_db<span class="w"> </span>-Fc<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-41-5"><a id="__codelineno-41-5" name="__codelineno-41-5" href="#__codelineno-41-5"></a><span class="w">  </span>&gt;<span class="w"> </span>backups/app_db_pg17.dump
+</span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Backup và version compatibility</p>
+<p>Khi di chuyển dữ liệu giữa major version, kiểm tra <strong>phiên bản <code>pg_dump</code>/<code>pg_restore</code></strong> và các extension tương ứng. Không xem một file backup là đảm bảo restore được vào mọi major PostgreSQL.</p>
+</div>
+<h2 id="10-toi-uu-tai-nguyen-va-van-hanh-lau-dai">10. Tối ưu tài nguyên và vận hành lâu dài<a class="headerlink" href="#10-toi-uu-tai-nguyen-va-van-hanh-lau-dai" title="Permanent link">&para;</a></h2>
+<ol>
+<li><strong>Chỉ bật các container đang cần:</strong> <code>docker compose stop postgres16 postgres17</code> nếu đang dùng PostgreSQL 18.</li>
+<li><strong>Đo trước khi tune:</strong> <code>docker stats</code>, <code>free -h</code>, <code>docker system df</code>. Không tự tăng <code>shared_buffers</code>, <code>work_mem</code>, <code>max_connections</code> nếu chưa có workload đo được.</li>
+<li><strong>Named Volume nằm trong storage Linux của Docker:</strong> tránh bind-mount data PostgreSQL vào <code>/mnt/c/...</code> vì hiệu năng filesystem và đặc tính I/O có thể bất lợi.</li>
+<li><strong>Không dùng <code>latest</code>:</strong> cố định major; cập nhật minor/patch có kiểm tra và backup.</li>
+<li><strong>Không tự động publish toàn bộ interface:</strong> ưu tiên <code>127.0.0.1</code> cho máy cá nhân; chỉ mở truy cập từ mạng ngoài khi có yêu cầu và phương án firewall/authentication rõ ràng.</li>
+<li><strong>Backup ra nơi độc lập:</strong> VM/distro WSL và named volume không phải hệ thống sao lưu.</li>
+<li><strong>Kiểm tra dung lượng:</strong> <code>docker volume ls</code>, <code>docker system df -v</code>; đừng <code>docker volume prune</code> khi chưa xác minh các volume cần giữ.</li>
+</ol>
+<h2 id="11-checklist-trien-khai">11. Checklist triển khai<a class="headerlink" href="#11-checklist-trien-khai" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Docker Engine và <code>docker compose</code> hoạt động trong Ubuntu.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Các file đặt tại <code>~/docker/postgres</code> trên Linux filesystem.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>.env</code> có mật khẩu mạnh, <code>chmod 600</code>, đã được <code>.gitignore</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> PostgreSQL 16/17 mount <code>/var/lib/postgresql/data</code>; PostgreSQL 18 mount <code>/var/lib/postgresql</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Port mapping là <code>HOST_PORT:5432</code>, <strong>không bị đảo ngược</strong>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>docker compose config --quiet</code> thành công.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>docker ps</code> cho thấy container <code>healthy</code> và port được publish đúng.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>nc -vz 127.0.0.1 5433</code> trong WSL thành công (đối với PostgreSQL 18).</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> <code>Test-NetConnection 127.0.0.1 -Port 5433</code> trong Windows thành công.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> DBeaver kết nối và chạy <code>SELECT version();</code> thành công.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Spring Boot kết nối bằng host port; nếu chạy container cùng network thì dùng service name.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Đã thử <strong>backup và restore vào DB kiểm thử</strong>, không chỉ tạo file backup.</li>
+</ul>
+<h2 id="12-tai-lieu-tham-khao-chinh-thuc">12. Tài liệu tham khảo chính thức<a class="headerlink" href="#12-tai-lieu-tham-khao-chinh-thuc" title="Permanent link">&para;</a></h2>
+<ol>
+<li><a href="https://hub.docker.com/_/postgres">Docker Official Image — PostgreSQL</a> — Environment variables, data volumes, initialization.</li>
+<li><a href="https://github.com/docker-library/docs/blob/master/postgres/README.md">PostgreSQL Docker Official Image README</a> — <code>PGDATA</code> và thay đổi volume từ PostgreSQL 18.</li>
+<li><a href="https://docs.docker.com/reference/compose-file/profiles/">Docker Compose — Profiles</a> — Bật tắt service theo profile.</li>
+<li><a href="https://docs.docker.com/compose/how-tos/networking/">Docker Compose — Networking</a> — Phân biệt <code>HOST_PORT</code>, <code>CONTAINER_PORT</code>, service DNS.</li>
+<li><a href="https://learn.microsoft.com/en-us/windows/wsl/networking">Microsoft — Accessing network applications with WSL</a> — Kết nối Windows ↔ WSL trong NAT.</li>
+<li><a href="https://learn.microsoft.com/en-us/windows/wsl/wsl-config">Microsoft — Advanced settings configuration in WSL</a> — <code>localhostForwarding</code> và <code>.wslconfig</code>.</li>
+<li><a href="https://www.postgresql.org/docs/current/backup.html">PostgreSQL — Backup and Restore</a> — Backup/restore chuẩn PostgreSQL.</li>
+<li><a href="https://squidfunk.github.io/mkdocs-material/reference/admonitions/">Material for MkDocs — Admonitions</a> và <a href="https://squidfunk.github.io/mkdocs-material/reference/content-tabs/">Content Tabs</a> — Cú pháp trình bày tài liệu.</li>
+</ol>
+<hr />
+<p><strong>Tóm tắt:</strong> Một Docker Engine trong WSL Ubuntu có thể phục vụ nhiều dự án qua PostgreSQL 16/17/18. <strong>Mỗi major có service, host port và volume riêng</strong>; bật đúng phiên bản bằng Docker Compose Profiles; Windows chỉ cần DBeaver, không cần PostgreSQL Server. Với ví dụ PostgreSQL 18, <strong>Windows/WSL kết nối <code>127.0.0.1:5433</code></strong>, còn port <strong>bên trong container luôn là <code>5432</code></strong>.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.expand", "navigation.top", "navigation.tracking", "navigation.indexes", "search.suggest", "search.highlight", "search.share", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
